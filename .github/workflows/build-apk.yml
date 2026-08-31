@@ -42,13 +42,13 @@ jobs:
         run: gradle :app:assembleDebug --stacktrace
 
       - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk liushui-debug.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk moneymanager-debug.apk
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: liushui-debug-apk
-          path: liushui-debug.apk
+          name: moneymanager-debug-apk
+          path: moneymanager-debug.apk
 
       - name: Publish to "latest" release
         uses: softprops/action-gh-release@v2
@@ -57,6 +57,6 @@ jobs:
           name: 最新安装包
           body: 自动构建，手机浏览器直接打开下面的 apk 文件下载安装。
           prerelease: true
-          files: liushui-debug.apk
+          files: moneymanager-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
