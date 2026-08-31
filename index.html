@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="流水">
+<meta name="theme-color" content="#EDEFE9">
+<title>流水 · 支出记录</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDEFE9;
+  --paper-2:#E4E7DE;
+  --card:#F6F7F3;
+  --ink:#14170F;
+  --ink-60:#5C6156;
+  --ink-35:#8E9387;
+  --rule:#CDD2C3;
+  --rule-soft:#DCE0D5;
+  --stamp:#C8102E;
+  --moss:#4A5D3A;
+
+  --c1:#4A5D3A; --c2:#7C6A46; --c3:#3E5A66; --c4:#8A4B52;
+  --c5:#5B5470; --c6:#6E7C4C; --c7:#8A6B3E; --c8:#455B52;
+  --c9:#7A5566; --c10:#3F4F5E; --c11:#6B6B5C;
+
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',sans-serif;
+
+  --pad:20px;
+  --sat:env(safe-area-inset-top,0px);
+  --sab:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:calc(96px + var(--sab));
+  overscroll-behavior-y:contain;
+}
+button{font:inherit;color:inherit;background:none;border:none;padding:0;cursor:pointer}
+input,select{font:inherit;color:inherit}
+
+/* ---------- 通用排版 ---------- */
+.eyebrow{
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-35);
+  font-weight:500;
+}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+#cat-label{letter-spacing:.03em;text-transform:none;font-size:11px}
+.hr{height:1px;background:var(--rule);border:0;margin:0}
+.hr-soft{height:1px;background:var(--rule-soft);border:0;margin:0}
+
+/* ---------- 顶栏 ---------- */
+header{
+  position:sticky;top:0;z-index:30;
+  background:var(--paper);
+  padding:calc(var(--sat) + 14px) var(--pad) 0;
+}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px}
+.wordmark{display:flex;align-items:baseline;gap:8px}
+.wordmark b{font-size:16px;font-weight:600;letter-spacing:.02em}
+.wordmark span{font-family:var(--mono);font-size:10px;color:var(--ink-35);letter-spacing:.12em}
+.review-badge{
+  font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+  color:var(--stamp);border:1px solid var(--stamp);padding:2px 7px;
+}
+.icon-btn{
+  width:34px;height:34px;border:1px solid var(--rule);border-radius:0;
+  display:grid;place-items:center;color:var(--ink-60);
+  transition:background .15s,color .15s;
+}
+.icon-btn:hover,.icon-btn:focus-visible{background:var(--paper-2);color:var(--ink)}
+.icon-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6}
+
+/* 周期切换 —— 刻度式 */
+.periods{display:flex;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.periods button{
+  flex:1;padding:11px 4px 10px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-35);position:relative;transition:color .15s;
+}
+.periods button+button{border-left:1px solid var(--rule-soft)}
+.periods button[aria-selected="true"]{color:var(--ink)}
+.periods button[aria-selected="true"]::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--stamp);
+}
+
+/* ---------- 主数字 ---------- */
+main{padding:0 var(--pad)}
+.hero{padding:26px 0 0}
+.hero-range{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.nav-arrow{
+  font-family:var(--mono);font-size:15px;color:var(--ink-35);
+  width:28px;height:28px;display:grid;place-items:center;
+}
+.nav-arrow:hover{color:var(--ink)}
+.nav-arrow[disabled]{opacity:.25;cursor:default}
+
+.total{
+  font-family:var(--mono);
+  font-variant-numeric:tabular-nums;
+  font-weight:500;
+  font-size:clamp(46px,15.5vw,68px);
+  line-height:.92;
+  letter-spacing:-.035em;
+  display:flex;align-items:flex-start;gap:.12em;
+  color:var(--ink);
+}
+.total .yen{font-size:.4em;color:var(--stamp);margin-top:.22em;letter-spacing:0}
+.total .cents{font-size:.5em;margin-top:.16em;margin-left:-.06em;color:var(--ink-60);letter-spacing:-.02em}
+
+.stats{
+  display:flex;flex-wrap:wrap;gap:0 22px;margin-top:16px;
+}
+.stat{display:flex;align-items:baseline;gap:7px}
+.stat b{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:500}
+.stat span{font-size:11.5px;color:var(--ink-35)}
+
+/* ---------- 收支对比 ---------- */
+.io-bars{margin-top:20px;border-top:1px solid var(--rule);padding-top:14px}
+.io-bar-row{display:flex;align-items:center;gap:10px;padding:5px 0}
+.io-bar-row .io-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--ink-35);width:32px;flex-shrink:0}
+.io-bar-row .io-bar{flex:1;height:9px;background:var(--paper-2);overflow:hidden}
+.io-bar-row .io-bar i{display:block;height:100%;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+.io-bar-row .io-amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12.5px;min-width:74px;text-align:right}
+.io-bar-row.balance{border-top:1px solid var(--rule-soft);margin-top:6px;padding-top:9px;justify-content:flex-end}
+.io-bar-row.balance .io-label{width:auto;margin-right:auto}
+
+/* ---------- 签名元素：占比刻度条 ---------- */
+.bar-wrap{margin-top:22px}
+.bar{
+  display:flex;height:26px;width:100%;
+  background:var(--paper-2);
+  overflow:hidden;
+}
+.bar i{display:block;height:100%;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+.bar-ticks{
+  display:flex;justify-content:space-between;
+  border-top:1px solid var(--rule);
+  padding-top:5px;margin-top:0;
+}
+.bar-ticks span{font-family:var(--mono);font-size:9.5px;color:var(--ink-35);letter-spacing:.06em}
+
+/* ---------- 分类排行 ---------- */
+.section{margin-top:34px}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.cats{border-top:1px solid var(--rule)}
+.cat-row{
+  display:grid;grid-template-columns:9px 1fr auto auto;
+  align-items:center;gap:11px;
+  padding:11px 0;border-bottom:1px solid var(--rule-soft);
+}
+.swatch{width:9px;height:9px;border-radius:0}
+.cat-name{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cat-pct{font-family:var(--mono);font-size:10.5px;color:var(--ink-35);min-width:34px;text-align:right}
+.cat-amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;min-width:76px;text-align:right}
+
+/* ---------- 流水 ---------- */
+.day-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  padding:20px 0 7px;
+}
+.day-head .d{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-60);text-transform:uppercase}
+.day-head .s{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:11px;color:var(--ink-35)}
+.tx{
+  display:grid;grid-template-columns:9px 1fr auto;
+  align-items:center;gap:11px;
+  padding:12px 0;border-top:1px solid var(--rule-soft);
+  animation:rise .3s cubic-bezier(.2,.7,.2,1) both;
+}
+.tx-main{min-width:0}
+.tx-merch{font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tx-meta{display:flex;gap:8px;align-items:center;margin-top:2px}
+.tx-meta span{font-family:var(--mono);font-size:10px;color:var(--ink-35);letter-spacing:.04em}
+.tx-amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;letter-spacing:-.01em}
+.tx-amt.income{color:var(--moss)}
+.tx-del{
+  width:26px;height:26px;display:none;place-items:center;
+  font-family:var(--mono);font-size:14px;color:var(--ink-35);
+}
+.tx:hover .tx-del,.tx:focus-within .tx-del{display:grid}
+.tx:hover .tx-del:hover{color:var(--stamp)}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.empty{
+  border:1px dashed var(--rule);
+  padding:30px 22px;text-align:center;margin-top:8px;
+}
+.empty p{margin:0 0 4px;font-size:14px}
+.empty small{color:var(--ink-35);font-size:12px}
+
+.report-text{
+  font-size:13.5px;line-height:1.75;color:var(--ink-60);
+  margin:0;padding:14px 16px;background:var(--card);border:1px solid var(--rule);
+}
+
+/* ---------- 底部动作条 ---------- */
+.dock{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  padding:26px var(--pad) calc(12px + var(--sab));
+  background:linear-gradient(to top,var(--paper) 0,var(--paper) 74%,rgba(237,239,233,0) 100%);
+  display:flex;gap:9px;
+}
+.dock button{
+  flex:1;padding:14px 8px;
+  font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid var(--ink);
+  transition:transform .1s;
+}
+.dock button:active{transform:scale(.985)}
+.dock .primary{background:var(--ink);color:var(--paper);flex:1.5}
+.dock .ghost{background:var(--paper);color:var(--ink)}
+
+/* ---------- 抽屉 ---------- */
+.scrim{
+  position:fixed;inset:0;z-index:50;background:rgba(20,23,15,.32);
+  opacity:0;pointer-events:none;transition:opacity .22s;
+}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  background:var(--paper);
+  border-top:2px solid var(--ink);
+  transform:translateY(101%);
+  transition:transform .3s cubic-bezier(.2,.75,.2,1);
+  max-height:94vh;overflow-y:auto;
+  padding:0 var(--pad);
+  -webkit-overflow-scrolling:touch;
+}
+.sheet.on{transform:none}
+.sheet-head{
+  position:sticky;top:0;background:var(--paper);z-index:2;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 0 12px;border-bottom:1px solid var(--rule);margin-bottom:18px;
+}
+.sheet-head h2{margin:0;font-size:15px;font-weight:600;letter-spacing:.01em}
+.close{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--ink-35);text-transform:uppercase}
+.close:hover{color:var(--ink)}
+
+/* 录入 */
+.amount-display{
+  font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:500;
+  font-size:52px;line-height:1;letter-spacing:-.035em;
+  text-align:right;padding:6px 0 14px;border-bottom:2px solid var(--ink);
+  display:flex;align-items:baseline;justify-content:flex-end;gap:.1em;
+}
+.amount-display .yen{font-size:.36em;color:var(--stamp)}
+.amount-display.zero{color:var(--ink-35)}
+.amount-display.income .yen{color:var(--moss)}
+
+.type-toggle{display:flex;border:1px solid var(--rule);margin-bottom:18px}
+.type-toggle button{flex:1;padding:10px 4px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-35);position:relative;transition:background .15s,color .15s}
+.type-toggle button+button{border-left:1px solid var(--rule-soft)}
+.type-toggle button[aria-selected="true"]{color:var(--paper);background:var(--ink)}
+
+.field{margin-top:20px}
+.field label{display:block;margin-bottom:7px}
+.field input[type=text],.field input[type=datetime-local]{
+  width:100%;padding:11px 12px;background:var(--card);
+  border:1px solid var(--rule);border-radius:0;
+}
+.field input:focus{outline:2px solid var(--ink);outline-offset:-2px}
+
+.time-toggle{
+  width:100%;display:flex;align-items:baseline;gap:10px;
+  padding:9px 0;border-bottom:1px solid var(--rule-soft);text-align:left;
+}
+.time-toggle #time-preview{font-family:var(--mono);font-size:13px;color:var(--ink)}
+.time-toggle .tt-go{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ink-35)}
+.time-toggle:hover .tt-go{color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{
+  padding:8px 12px;border:1px solid var(--rule);background:var(--card);
+  font-size:12.5px;display:flex;align-items:center;gap:6px;
+  transition:background .12s,border-color .12s;
+}
+.chip i{width:7px;height:7px;display:block}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip.guessed{border-color:var(--stamp);border-style:dashed}
+
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);margin-top:20px;border:1px solid var(--rule)}
+.keypad button{
+  background:var(--card);padding:14px 0;
+  font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:20px;font-weight:500;
+  transition:background .1s;
+}
+.keypad button:active{background:var(--paper-2)}
+.keypad button.wide{grid-column:span 1}
+
+.save-wrap{
+  position:sticky;bottom:0;z-index:3;
+  background:var(--paper);
+  padding:12px 0 calc(18px + var(--sab));
+  margin-top:18px;
+}
+.save-wrap::before{
+  content:"";position:absolute;left:0;right:0;top:-14px;height:14px;
+  background:linear-gradient(to top,var(--paper),rgba(237,239,233,0));
+  pointer-events:none;
+}
+.save-btn{
+  width:100%;padding:16px;
+  background:var(--ink);color:var(--paper);
+  font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+}
+.save-btn[disabled]{opacity:.32}
+
+/* 导入 */
+.drop{
+  border:1px dashed var(--rule);padding:26px 18px;text-align:center;
+  background:var(--card);transition:border-color .15s,background .15s;
+}
+.drop.hot{border-color:var(--ink);background:var(--paper-2)}
+.drop p{margin:0 0 6px;font-size:14px}
+.drop small{color:var(--ink-35);font-size:11.5px;display:block;line-height:1.6}
+.file-btn{
+  display:inline-block;margin-top:14px;padding:10px 20px;border:1px solid var(--ink);
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+}
+.log{
+  margin-top:16px;font-family:var(--mono);font-size:11.5px;line-height:1.85;
+  color:var(--ink-60);border-top:1px solid var(--rule);padding-top:12px;
+}
+.log b{color:var(--ink);font-weight:500}
+.log .bad{color:var(--stamp)}
+
+/* 设置 */
+.row-btn{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:15px 0;border-bottom:1px solid var(--rule-soft);text-align:left;
+}
+.row-btn small{display:block;color:var(--ink-35);font-size:11.5px;margin-top:2px;line-height:1.5}
+.row-btn .go{font-family:var(--mono);font-size:12px;color:var(--ink-35)}
+.row-btn:hover .go{color:var(--ink)}
+.code{
+  font-family:var(--mono);font-size:11px;background:var(--card);
+  border:1px solid var(--rule);padding:11px;margin-top:9px;
+  word-break:break-all;line-height:1.7;color:var(--ink-60);
+}
+.code b{color:var(--stamp);font-weight:500}
+
+/* Toast */
+.toast{
+  position:fixed;left:var(--pad);right:var(--pad);
+  bottom:calc(96px + var(--sab));z-index:70;
+  background:var(--ink);color:var(--paper);
+  padding:13px 15px;
+  display:flex;align-items:center;gap:10px;
+  transform:translateY(140%);opacity:0;
+  pointer-events:none;
+  transition:transform .28s cubic-bezier(.2,.75,.2,1),opacity .28s;
+}
+.toast.on{transform:none;opacity:1;pointer-events:auto}
+.toast .t-amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;font-weight:500}
+.toast .t-txt{font-size:13px;opacity:.82;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toast .t-undo{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid rgba(237,239,233,.5);padding-bottom:1px;flex-shrink:0}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+@media (min-width:620px){
+  body{max-width:600px;margin:0 auto;border-left:1px solid var(--rule);border-right:1px solid var(--rule);min-height:100vh}
+  .dock{max-width:600px;left:50%;transform:translateX(-50%)}
+  .sheet{max-width:600px;left:50%;transform:translateX(-50%) translateY(101%)}
+  .sheet.on{transform:translateX(-50%)}
+  .toast{max-width:560px;left:50%;transform:translateX(-50%) translateY(140%)}
+  .toast.on{transform:translateX(-50%);pointer-events:auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar">
+    <div class="wordmark"><b>流水</b><span id="wm-count">0 笔</span><button class="review-badge" id="review-badge" hidden></button></div>
+    <button class="icon-btn" id="btn-settings" aria-label="设置与备份">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>
+    </button>
+  </div>
+  <div class="periods" role="tablist">
+    <button role="tab" data-period="week" aria-selected="true">本周</button>
+    <button role="tab" data-period="month" aria-selected="false">本月</button>
+    <button role="tab" data-period="all" aria-selected="false">全部</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-range">
+      <span class="eyebrow" id="range-label">—</span>
+      <div style="display:flex;gap:2px">
+        <button class="nav-arrow" id="nav-prev" aria-label="上一期">←</button>
+        <button class="nav-arrow" id="nav-next" aria-label="下一期">→</button>
+      </div>
+    </div>
+    <div class="total" id="total"><span class="yen">¥</span><span id="total-int">0</span><span class="cents" id="total-cents">.00</span></div>
+    <div class="stats" id="stats"></div>
+    <div class="io-bars" id="io-bars"></div>
+    <div class="bar-wrap">
+      <div class="bar" id="bar"></div>
+      <div class="bar-ticks" id="bar-ticks"></div>
+    </div>
+  </section>
+
+  <section class="section" id="report-section">
+    <div class="section-head">
+      <span class="eyebrow">小结</span>
+    </div>
+    <p class="report-text" id="report-text"></p>
+  </section>
+
+  <section class="section" id="cats-section">
+    <div class="section-head">
+      <span class="eyebrow">分类构成</span>
+      <span class="eyebrow" id="cats-count"></span>
+    </div>
+    <div class="cats" id="cats"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="eyebrow">流水明细</span>
+    </div>
+    <div id="feed"></div>
+  </section>
+</main>
+
+<div class="dock">
+  <button class="primary" id="btn-add">记一笔</button>
+  <button class="ghost" id="btn-import">导入账单</button>
+</div>
+
+<div class="scrim" id="scrim"></div>
+
+<!-- 录入 -->
+<div class="sheet" id="sheet-add" role="dialog" aria-label="记一笔">
+  <div class="sheet-head">
+    <h2>记一笔</h2>
+    <button class="close" data-close>关闭</button>
+  </div>
+  <div class="type-toggle" id="type-toggle" role="tablist">
+    <button role="tab" data-type="expense" aria-selected="true">支出</button>
+    <button role="tab" data-type="income" aria-selected="false">收入</button>
+  </div>
+  <div class="amount-display zero" id="amt-display"><span class="yen">¥</span><span id="amt-text">0</span></div>
+  <div class="field">
+    <label class="eyebrow">花在哪</label>
+    <input type="text" id="in-merchant" placeholder="瑞幸 / 地铁 / 盒马…" autocomplete="off" enterkeyhint="done">
+  </div>
+  <div class="field">
+    <label class="eyebrow" id="cat-label">分类</label>
+    <div class="chips" id="cat-chips"></div>
+  </div>
+  <div class="field">
+    <button class="time-toggle" id="time-toggle">
+      <span class="eyebrow">时间</span><span id="time-preview">现在</span><span class="tt-go">改</span>
+    </button>
+    <input type="datetime-local" id="in-time" hidden>
+  </div>
+  <div class="keypad" id="keypad"></div>
+  <div class="save-wrap"><button class="save-btn" id="btn-save" disabled>记下</button></div>
+</div>
+
+<!-- 导入 -->
+<div class="sheet" id="sheet-import" role="dialog" aria-label="导入账单">
+  <div class="sheet-head">
+    <h2>导入账单</h2>
+    <button class="close" data-close>关闭</button>
+  </div>
+  <div class="drop" id="drop">
+    <p>把 CSV 拖进来，或选择文件</p>
+    <small>
+      支付宝：我的 › 账单 › 右上角 › 开具交易流水证明 › 用于个人对账<br>
+      微信：我 › 服务 › 钱包 › 账单 › 常见问题 › 下载账单 › 用于个人对账<br>
+      账单会发到邮箱，解压后拿到 CSV
+    </small>
+    <label class="file-btn" for="file-in">选择文件</label>
+    <input type="file" id="file-in" accept=".csv,.txt" multiple hidden>
+  </div>
+  <div class="log" id="import-log" hidden></div>
+  <div style="height:calc(20px + var(--sab))"></div>
+</div>
+
+<!-- 待确认分类 -->
+<div class="sheet" id="sheet-review" role="dialog" aria-label="待确认分类">
+  <div class="sheet-head">
+    <h2>待确认分类</h2>
+    <button class="close" data-close>关闭</button>
+  </div>
+  <div id="review-body"></div>
+  <div style="height:calc(20px + var(--sab))"></div>
+</div>
+
+<!-- 设置 -->
+<div class="sheet" id="sheet-settings" role="dialog" aria-label="设置与备份">
+  <div class="sheet-head">
+    <h2>设置与备份</h2>
+    <button class="close" data-close>关闭</button>
+  </div>
+  <button class="row-btn" id="btn-export">
+    <span>导出全部数据<small>下载 JSON 备份，含记录和分类记忆</small></span>
+    <span class="go">导出</span>
+  </button>
+  <label class="row-btn" for="file-restore" style="cursor:pointer">
+    <span>恢复备份<small>选择之前导出的 JSON，合并进现有数据</small></span>
+    <span class="go">选择</span>
+  </label>
+  <input type="file" id="file-restore" accept=".json" hidden>
+  <button class="row-btn" id="btn-copy-url">
+    <span>自动写入接口<small>给 iOS 快捷指令 / Android 通知监听调用</small></span>
+    <span class="go">复制</span>
+  </button>
+  <div class="code" id="api-code"></div>
+  <button class="row-btn" id="btn-wipe" style="border-bottom:none">
+    <span style="color:var(--stamp)">清空所有数据<small>不可恢复，请先导出备份</small></span>
+    <span class="go">清空</span>
+  </button>
+  <div class="log" style="border-top:1px solid var(--rule);margin-top:20px">
+    数据只存在这台设备的浏览器里，不上传任何地方。<br>
+    <span id="storage-note"></span>
+  </div>
+  <div style="height:calc(20px + var(--sab))"></div>
+</div>
+
+<div class="toast" id="toast">
+  <span class="t-amt" id="toast-amt"></span>
+  <span class="t-txt" id="toast-txt"></span>
+  <button class="t-undo" id="toast-undo">撤销</button>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   1. 分类体系
+   ============================================================ */
+const CATS = [
+  {k:'食',  n:'餐饮',  c:'var(--c1)'},
+  {k:'行',  n:'交通',  c:'var(--c3)'},
+  {k:'购',  n:'购物',  c:'var(--c4)'},
+  {k:'日',  n:'日用',  c:'var(--c6)'},
+  {k:'乐',  n:'娱乐',  c:'var(--c5)'},
+  {k:'住',  n:'居住',  c:'var(--c2)'},
+  {k:'讯',  n:'通信',  c:'var(--c10)'},
+  {k:'医',  n:'医疗',  c:'var(--c8)'},
+  {k:'学',  n:'学习',  c:'var(--c7)'},
+  {k:'转',  n:'转账',  c:'var(--c9)'},
+  {k:'他',  n:'其他',  c:'var(--c11)'},
+];
+const INCOME_CATS = [
+  {k:'薪', n:'工资',      c:'var(--moss)'},
+  {k:'兼', n:'兼职',      c:'var(--moss)'},
+  {k:'财', n:'理财',      c:'var(--moss)'},
+  {k:'红', n:'红包',      c:'var(--moss)'},
+  {k:'退', n:'报销/退款', c:'var(--moss)'},
+  {k:'他', n:'其他收入',  c:'var(--moss)'},
+];
+const CAT_COLOR = {};
+CATS.forEach(c=>CAT_COLOR[c.n]=c.c);
+INCOME_CATS.forEach(c=>CAT_COLOR[c.n]=c.c);
+
+const INCOME_RULES = {
+  '工资':['工资','薪资','薪酬','发薪','代发工资','年终奖','奖金'],
+  '兼职':['兼职','劳务','稿费','佣金','外快'],
+  '理财':['理财','基金','股息','分红','利息','余额宝','收益','赎回'],
+  '红包':['红包','压岁钱','礼金'],
+  '报销/退款':['报销','退款','退货','退回','退费','退单'],
+};
+
+const RULES = {
+  '餐饮':['瑞幸','星巴克','库迪','蜜雪','喜茶','奈雪','霸王茶姬','美团','饿了么','肯德基','麦当劳','必胜客','汉堡','海底捞','餐','饭','食','咖啡','奶茶','茶饮','火锅','烧烤','烤肉','面馆','米线','粉','小吃','外卖','食堂','酒楼','餐厅','厨','bakery','面包','蛋糕','便当','寿司','拉面','coffee','cafe'],
+  '交通':['地铁','公交','轨道交通','滴滴','高德','花小猪','出行','打车','网约车','加油','中石化','中石油','停车','火车','12306','铁路','航空','机票','东航','南航','国航','单车','哈啰','青桔','美团单车','ETC','高速','客运','轮渡','租车'],
+  '购物':['淘宝','天猫','京东','拼多多','阿里巴巴','唯品会','得物','闲鱼','小米','苹果','Apple','华为','旗舰店','商贸','服饰','鞋','箱包','数码','家具','宜家','优衣库','ZARA','网购','抖音商城','快手小店'],
+  '日用':['超市','便利','7-ELEVEN','全家','罗森','便利蜂','盒马','永辉','沃尔玛','山姆','大润发','华润万家','菜市','生鲜','水果','屈臣氏','日化','洗护','纸巾','洗衣','美团买菜','多多买菜','叮咚'],
+  '娱乐':['影院','电影','万达影','CGV','腾讯视频','爱奇艺','优酷','芒果TV','哔哩哔哩','B站','Steam','游戏','网易游戏','王者','原神','KTV','酒吧','健身','运动','网易云音乐','QQ音乐','Spotify','剧本杀','密室','展览','演出','门票','旅游','酒店','民宿','携程','飞猪','Netflix'],
+  '居住':['房租','租金','物业','水费','电费','燃气','供暖','国家电网','自来水','燃气公司','公寓','中介','押金'],
+  '通信':['移动','联通','电信','话费','充值','流量','宽带','手机费','虚拟运营'],
+  '医疗':['医院','药房','大药房','药店','诊所','体检','口腔','牙','眼科','挂号','医保','妇幼','中医','康复','眼镜'],
+  '学习':['图书','书店','当当','博库','课程','学费','教育','培训','考试','报名费','知识','得到','极客','慕课','文具','打印','复印','订阅','ChatGPT','Claude','Adobe','Figma','Notion','会员'],
+  '转账':['转账','红包','零钱','提现','还款','信用卡','花呗','借呗','白条','亲情','转出','汇款','贷款'],
+};
+
+const TAOBAO_LIKE = ['淘宝','天猫','支付宝','微信','商户','个体户','有限公司'];
+
+/* ============================================================
+   2. 存储层（localStorage，失败退化到内存）
+   ============================================================ */
+const KEY = 'liushui.v1';
+let memFallback = null;
+
+function loadDB(){
+  const blank = {tx:[], memory:{}, v:1};
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return blank;
+    const d = JSON.parse(raw);
+    return {tx:Array.isArray(d.tx)?d.tx:[], memory:d.memory||{}, v:1};
+  }catch(e){
+    if(memFallback) return memFallback;
+    return blank;
+  }
+}
+function saveDB(){
+  try{
+    localStorage.setItem(KEY, JSON.stringify(DB));
+    return true;
+  }catch(e){
+    memFallback = DB;
+    return false;
+  }
+}
+let DB = loadDB();
+let storageOK = (function(){
+  try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t'); return true; }catch(e){ return false; }
+})();
+
+/* ============================================================
+   3. 自动分类引擎
+   ============================================================ */
+function normalize(s){
+  return String(s||'').toLowerCase().replace(/\s+/g,'').replace(/[（）()【】\[\]·、,，.。"'"'-]/g,'');
+}
+function classify(merchant, note, rawCat, type){
+  return classifyC(merchant, note, rawCat, type).cat;
+}
+// 带置信度的分类：confident=false 表示纯靠兜底猜的，值得向用户确认
+function classifyC(merchant, note, rawCat, type){
+  return type === 'income' ? classifyIncome(merchant, note, rawCat) : classifyExpense(merchant, note, rawCat);
+}
+function classifyExpense(merchant, note, rawCat){
+  const hay = normalize(merchant + ' ' + (note||'') + ' ' + (rawCat||''));
+  if(!hay) return {cat:'其他', confident:false};
+
+  // 3.1 学过的商户，优先
+  const memKey = normalize(merchant);
+  if(memKey && DB.memory[memKey]) return {cat:DB.memory[memKey], confident:true};
+
+  // 3.2 平台自带分类（支付宝新版账单有「交易分类」列，很准）
+  if(rawCat){
+    const rc = String(rawCat);
+    for(const c of CATS){ if(rc.includes(c.n)) return {cat:c.n, confident:true}; }
+    const map = {'餐饮美食':'餐饮','食品':'餐饮','交通出行':'交通','服饰':'购物','日用百货':'日用',
+                 '文化休闲':'娱乐','运动户外':'娱乐','家居':'日用','充值缴费':'通信','医疗健康':'医疗',
+                 'education':'学习','亲友代付':'转账','转账红包':'转账','商业服务':'其他','数码电器':'购物',
+                 '住房物业':'居住','美容美发':'日用','爱车养车':'交通','酒店旅游':'娱乐','投资理财':'转账',
+                 '公共服务':'其他','保险':'其他','母婴亲子':'日用','宠物':'日用'};
+    for(const k in map){ if(rc.includes(k)) return {cat:map[k], confident:true}; }
+  }
+
+  // 3.3 关键词命中，取最长匹配（更具体的词优先）
+  let best = null, bestLen = 0;
+  for(const cat in RULES){
+    for(const kw of RULES[cat]){
+      const nk = normalize(kw);
+      if(nk && hay.includes(nk) && nk.length > bestLen){ best = cat; bestLen = nk.length; }
+    }
+  }
+  if(best) return {cat:best, confident:true};
+  return {cat:'其他', confident:false};
+}
+function classifyIncome(merchant, note, rawCat){
+  const hay = normalize(merchant + ' ' + (note||'') + ' ' + (rawCat||''));
+  if(!hay) return {cat:'其他收入', confident:false};
+
+  const memKey = normalize(merchant);
+  if(memKey && DB.memory[memKey+'::in']) return {cat:DB.memory[memKey+'::in'], confident:true};
+
+  let best = null, bestLen = 0;
+  for(const cat in INCOME_RULES){
+    for(const kw of INCOME_RULES[cat]){
+      const nk = normalize(kw);
+      if(nk && hay.includes(nk) && nk.length > bestLen){ best = cat; bestLen = nk.length; }
+    }
+  }
+  if(best) return {cat:best, confident:true};
+  return {cat:'其他收入', confident:false};
+}
+function remember(merchant, cat, type){
+  const k = normalize(merchant);
+  if(!k || !cat) return;
+  if(type === 'income') DB.memory[k+'::in'] = cat;
+  else DB.memory[k] = cat;
+}
+
+/* ============================================================
+   4. 工具
+   ============================================================ */
+const pad2 = n => String(n).padStart(2,'0');
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function money(n){
+  const v = Math.abs(Number(n)||0);
+  return v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function localISO(d){
+  return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'T'+pad2(d.getHours())+':'+pad2(d.getMinutes());
+}
+function startOfWeek(d){ // 周一为一周之始
+  const x = new Date(d); x.setHours(0,0,0,0);
+  const dow = (x.getDay()+6)%7;
+  x.setDate(x.getDate()-dow);
+  return x;
+}
+function fingerprint(t){
+  if(t.orderNo) return 'o:'+t.orderNo;
+  return 'f:'+ (t.type==='income'?'in':'ex') + '|' + (t.time||'').slice(0,16) + '|' + Number(t.amount).toFixed(2) + '|' + normalize(t.merchant).slice(0,14);
+}
+
+/* ============================================================
+   5. 写入
+   ============================================================ */
+function addTx(t, opts){
+  opts = opts||{};
+  const type = t.type === 'income' ? 'income' : 'expense';
+  let category = t.category;
+  let needsReview = false;
+  if(!category){
+    const guess = classifyC(t.merchant, t.note, t.rawCat, type);
+    category = guess.cat;
+    // 只对自动来源（导入 / 自动写入）的低置信度猜测排队确认，手动记账当场就选好了分类
+    needsReview = !guess.confident && t.source !== 'manual';
+  }
+  const rec = {
+    id: uid(),
+    amount: Math.abs(Number(t.amount)||0),
+    merchant: (t.merchant||'未填写').trim().slice(0,60),
+    type: type,
+    category: category,
+    needsReview: needsReview,
+    time: t.time || localISO(new Date()),
+    source: t.source || 'manual',
+    orderNo: t.orderNo || '',
+    note: t.note || ''
+  };
+  if(rec.amount <= 0) return null;
+  rec.fp = fingerprint(rec);
+  if(DB.tx.some(x => x.fp === rec.fp)) return null;  // 去重
+  DB.tx.push(rec);
+  if(opts.learn && t.merchant && t.category) remember(t.merchant, t.category, type);
+  if(!opts.silent){ saveDB(); render(); }
+  return rec;
+}
+function delTx(id){
+  const i = DB.tx.findIndex(x=>x.id===id);
+  if(i<0) return;
+  DB.tx.splice(i,1);
+  saveDB(); render();
+}
+
+/* ============================================================
+   6. 周期与汇总
+   ============================================================ */
+let period = 'week';
+let offset = 0;   // 0 = 本期，-1 = 上一期
+
+function getRange(){
+  const now = new Date();
+  if(period === 'all'){
+    return {from:new Date(0), to:new Date(3e12), label:'全部记录', days:null};
+  }
+  if(period === 'week'){
+    const s = startOfWeek(now); s.setDate(s.getDate() + offset*7);
+    const e = new Date(s); e.setDate(e.getDate()+7);
+    const eShow = new Date(e); eShow.setDate(eShow.getDate()-1);
+    const sameMonth = s.getMonth()===eShow.getMonth();
+    const label = (s.getMonth()+1)+'月'+s.getDate()+'日 – ' + (sameMonth?'':(eShow.getMonth()+1)+'月') + eShow.getDate()+'日';
+    return {from:s, to:e, label, days:7};
+  }
+  const s = new Date(now.getFullYear(), now.getMonth()+offset, 1);
+  const e = new Date(now.getFullYear(), now.getMonth()+offset+1, 1);
+  const days = Math.round((e-s)/864e5);
+  return {from:s, to:e, label:s.getFullYear()+'年'+(s.getMonth()+1)+'月', days};
+}
+function inRange(t, r){
+  const d = new Date(t.time);
+  return d >= r.from && d < r.to;
+}
+
+/* ============================================================
+   7. 渲染
+   ============================================================ */
+const $ = id => document.getElementById(id);
+
+function render(){
+  const r = getRange();
+  const listAll = DB.tx.filter(t => inRange(t, r)).sort((a,b)=> new Date(b.time)-new Date(a.time));
+  const list = listAll.filter(t => t.type !== 'income');       // 支出
+  const incomeList = listAll.filter(t => t.type === 'income'); // 收入
+  const total = list.reduce((s,t)=>s+t.amount, 0);
+  const incomeTotal = incomeList.reduce((s,t)=>s+t.amount, 0);
+  const balance = incomeTotal - total;
+
+  $('wm-count').textContent = DB.tx.length + ' 笔';
+  $('range-label').textContent = r.label;
+  $('nav-next').disabled = (offset >= 0) || period==='all';
+  $('nav-prev').disabled = (period==='all');
+
+  // 主数字
+  const parts = money(total).split('.');
+  $('total-int').textContent = parts[0];
+  $('total-cents').textContent = '.' + parts[1];
+
+  // 统计
+  let elapsed;
+  if(period==='all'){
+    if(DB.tx.length){
+      const first = DB.tx.reduce((m,t)=> new Date(t.time)<new Date(m.time)?t:m);
+      elapsed = Math.max(1, Math.ceil((Date.now()-new Date(first.time))/864e5));
+    } else elapsed = 1;
+  } else if(offset===0){
+    elapsed = Math.max(1, Math.ceil((Date.now()-r.from)/864e5));
+  } else elapsed = r.days;
+
+  const stats = [
+    ['¥'+money(total/elapsed), '日均'],
+    [String(list.length), '笔'],
+    [list.length? '¥'+money(total/list.length) : '—', '每笔'],
+  ];
+  $('stats').innerHTML = stats.map(([b,s])=>
+    `<span class="stat"><b>${b}</b><span>${s}</span></span>`).join('');
+
+  // 收支对比
+  const maxIO = Math.max(total, incomeTotal, 1);
+  $('io-bars').innerHTML = `
+    <div class="io-bar-row"><span class="io-label">支出</span><div class="io-bar"><i style="width:${(total/maxIO*100).toFixed(2)}%;background:var(--stamp)"></i></div><span class="io-amt num">¥${money(total)}</span></div>
+    <div class="io-bar-row"><span class="io-label">收入</span><div class="io-bar"><i style="width:${(incomeTotal/maxIO*100).toFixed(2)}%;background:var(--moss)"></i></div><span class="io-amt num">¥${money(incomeTotal)}</span></div>
+    <div class="io-bar-row balance"><span class="io-label">结余</span><span class="io-amt num" style="color:${balance>=0?'var(--moss)':'var(--stamp)'}">${balance>=0?'+':'−'}¥${money(Math.abs(balance))}</span></div>
+  `;
+
+  // 分类汇总
+  const agg = {};
+  list.forEach(t => agg[t.category] = (agg[t.category]||0) + t.amount);
+  const rows = Object.entries(agg).sort((a,b)=>b[1]-a[1]);
+
+  // 小结（人话版周报/月报）
+  const reportTxt = buildReport(r, total, incomeTotal, rows);
+  $('report-section').style.display = reportTxt ? '' : 'none';
+  $('report-text').textContent = reportTxt;
+
+  // 签名元素：占比刻度条
+  if(total > 0){
+    $('bar').innerHTML = rows.map(([c,v]) =>
+      `<i style="width:${(v/total*100).toFixed(3)}%;background:${CAT_COLOR[c]||'var(--c11)'}" title="${c} ¥${money(v)}"></i>`).join('');
+    const top = rows[0], second = rows[1];
+    $('bar-ticks').innerHTML =
+      `<span>${esc(top[0])} ${(top[1]/total*100).toFixed(0)}%</span>` +
+      `<span>${second ? esc(second[0])+' '+(second[1]/total*100).toFixed(0)+'%' : ''}</span>` +
+      `<span>最大单笔 ¥${money(Math.max(...list.map(t=>t.amount)))}</span>`;
+  } else {
+    $('bar').innerHTML = '';
+    $('bar-ticks').innerHTML = '<span>还没有数据</span><span>—</span><span></span>';
+  }
+
+  // 分类排行
+  $('cats-count').textContent = rows.length ? rows.length+' 类' : '';
+  $('cats').innerHTML = rows.length ? rows.map(([c,v]) => `
+    <div class="cat-row">
+      <i class="swatch" style="background:${CAT_COLOR[c]||'var(--c11)'}"></i>
+      <span class="cat-name">${esc(c)}</span>
+      <span class="cat-pct num">${(v/total*100).toFixed(0)}%</span>
+      <span class="cat-amt">${money(v)}</span>
+    </div>`).join('') : '';
+  $('cats-section').style.display = rows.length ? '' : 'none';
+
+  // 流水，按日分组
+  if(!listAll.length){
+    $('feed').innerHTML = `<div class="empty">
+      <p>${DB.tx.length ? '这段时间没有记录' : '还没有任何记录'}</p>
+      <small>${DB.tx.length ? '换个周期看看，或者往前翻' : '导入一份账单，或者手动记第一笔'}</small>
+    </div>`;
+    return;
+  }
+  const groups = {};
+  listAll.forEach(t=>{
+    const k = t.time.slice(0,10);
+    (groups[k] = groups[k]||[]).push(t);
+  });
+  const today = localISO(new Date()).slice(0,10);
+  const yest = (()=>{const d=new Date(); d.setDate(d.getDate()-1); return localISO(d).slice(0,10)})();
+
+  $('feed').innerHTML = Object.keys(groups).sort().reverse().map(k=>{
+    const items = groups[k];
+    const net = items.reduce((s,t)=> s + (t.type==='income' ? t.amount : -t.amount), 0);
+    const d = new Date(k+'T12:00');
+    const wd = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
+    const label = k===today ? '今天 · '+wd : k===yest ? '昨天 · '+wd
+      : (d.getMonth()+1)+'月'+d.getDate()+'日 · '+wd;
+    return `<div class="day-head"><span class="d">${label}</span><span class="s" style="color:${net>=0?'var(--moss)':'var(--ink-35)'}">${net>=0?'+':'−'}¥${money(Math.abs(net))}</span></div>` +
+      items.map(t=>{
+        const isIncome = t.type === 'income';
+        return `
+        <div class="tx">
+          <i class="swatch" style="background:${CAT_COLOR[t.category]||'var(--c11)'}"></i>
+          <div class="tx-main">
+            <div class="tx-merch">${esc(t.merchant)}</div>
+            <div class="tx-meta">
+              <span>${esc(t.category)}</span>
+              <span>${t.time.slice(11,16)}</span>
+              ${t.source!=='manual' ? `<span>${t.source==='import'?'账单':'自动'}</span>`:''}
+            </div>
+          </div>
+          <span class="tx-amt${isIncome?' income':''}">${isIncome?'+':'−'}${money(t.amount)}</span>
+          <button class="tx-del" data-del="${t.id}" aria-label="删除">×</button>
+        </div>`;
+      }).join('');
+  }).join('');
+
+  updateReviewBadge();
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// 人话小结：本期花了多少、大头是什么、跟上一期比怎么样
+function buildReport(r, total, incomeTotal, rows){
+  if(period === 'all') return '';
+  if(total <= 0 && incomeTotal <= 0) return '';
+
+  const spanMs = r.to - r.from;
+  const pf = new Date(r.from.getTime() - spanMs), pt = new Date(r.from);
+  const prevExpense = DB.tx
+    .filter(t => t.type !== 'income' && new Date(t.time) >= pf && new Date(t.time) < pt)
+    .reduce((s,t)=>s+t.amount, 0);
+
+  const parts = [];
+  parts.push(total>0
+    ? `这段时间一共花了 ¥${money(total)}${incomeTotal>0?`，收入 ¥${money(incomeTotal)}`:''}`
+    : `这段时间没有支出${incomeTotal>0?`，收入 ¥${money(incomeTotal)}`:''}`);
+
+  if(rows.length && total>0){
+    const top = rows[0];
+    parts.push(`大头是「${top[0]}」，¥${money(top[1])}（占${(top[1]/total*100).toFixed(0)}%）`);
+  }
+
+  if(prevExpense > 0 && total > 0){
+    const diff = total - prevExpense;
+    if(Math.abs(diff) >= 0.01){
+      parts.push(diff>0 ? `比上一期多花了 ¥${money(Math.abs(diff))}` : `比上一期少花了 ¥${money(Math.abs(diff))}`);
+    } else {
+      parts.push('跟上一期基本持平');
+    }
+  }
+
+  if(incomeTotal > 0){
+    const balance = incomeTotal - total;
+    parts.push(balance>=0 ? `结余 +¥${money(balance)}` : `倒贴了 ¥${money(Math.abs(balance))}`);
+  }
+  return parts.join('，') + '。';
+}
+
+/* ============================================================
+   7b. 待确认分类队列 —— 自动分类猜不准时，攒起来一起问
+   ============================================================ */
+function pendingReview(){ return DB.tx.filter(t=>t.needsReview); }
+function updateReviewBadge(){
+  const n = pendingReview().length;
+  $('review-badge').hidden = n===0;
+  if(n) $('review-badge').textContent = n + ' 待分类';
+}
+let reviewQueue = [];
+let reviewIdx = 0;
+function openReview(){
+  reviewQueue = pendingReview();
+  reviewIdx = 0;
+  renderReviewCard();
+  sheetOpen('sheet-review');
+}
+function renderReviewCard(){
+  const box = $('review-body');
+  if(reviewIdx >= reviewQueue.length){
+    box.innerHTML = `<div class="empty"><p>都确认完了</p><small>以后遇到同样的商户会自动记对分类</small></div>`;
+    return;
+  }
+  const t = reviewQueue[reviewIdx];
+  const CATLIST = t.type==='income' ? INCOME_CATS : CATS;
+  box.innerHTML = `
+    <div class="eyebrow" style="margin:18px 0 6px">${reviewIdx+1} / ${reviewQueue.length} · ${t.time.slice(5,16).replace('T',' ')}</div>
+    <div style="font-size:17px;margin-bottom:4px">${esc(t.merchant)}</div>
+    <div class="num" style="font-size:20px;margin-bottom:18px;color:${t.type==='income'?'var(--moss)':'var(--ink)'}">${t.type==='income'?'+':'−'}¥${money(t.amount)}</div>
+    <div class="eyebrow" style="margin-bottom:8px">这一笔该归到哪一类？</div>
+    <div class="chips" id="review-chips"></div>
+    <button class="row-btn" id="review-skip" style="margin-top:18px">先跳过<span class="go">下一笔</span></button>
+  `;
+  $('review-chips').innerHTML = CATLIST.map(c=>
+    `<button class="chip" data-cat="${c.n}"><i style="background:${c.c}"></i>${c.n}</button>`).join('');
+  $('review-chips').querySelectorAll('[data-cat]').forEach(b=>{
+    b.onclick = ()=>{
+      t.category = b.dataset.cat;
+      t.needsReview = false;
+      remember(t.merchant, t.category, t.type);
+      saveDB();
+      reviewIdx++;
+      renderReviewCard();
+      render();
+    };
+  });
+  $('review-skip').onclick = ()=>{
+    t.needsReview = false;
+    saveDB();
+    reviewIdx++;
+    renderReviewCard();
+    render();
+  };
+}
+$('review-badge').onclick = openReview;
+
+/* ============================================================
+   8. 抽屉
+   ============================================================ */
+let openSheet = null;
+function sheetOpen(id){
+  if(openSheet) $(openSheet).classList.remove('on');
+  openSheet = id;
+  $(id).classList.add('on');
+  $('scrim').classList.add('on');
+}
+function sheetClose(){
+  if(openSheet) $(openSheet).classList.remove('on');
+  openSheet = null;
+  $('scrim').classList.remove('on');
+}
+$('scrim').onclick = sheetClose;
+document.querySelectorAll('[data-close]').forEach(b=> b.onclick = sheetClose);
+
+/* ============================================================
+   9. 录入
+   ============================================================ */
+let amtStr = '';
+let pickedCat = null;
+let guessedCat = null;
+let currentType = 'expense';
+
+function renderCatChips(){
+  const CATLIST = currentType === 'income' ? INCOME_CATS : CATS;
+  $('cat-chips').innerHTML = CATLIST.map(c=>{
+    const on = pickedCat===c.n;
+    const guess = !pickedCat && guessedCat===c.n;
+    return `<button class="chip${guess?' guessed':''}" aria-pressed="${on}" data-cat="${c.n}">
+      <i style="background:${c.c}"></i>${c.n}</button>`;
+  }).join('');
+  $('cat-label').textContent = guessedCat && !pickedCat ? '分类 · 已自动判断为「'+guessedCat+'」' : '分类';
+  $('cat-chips').querySelectorAll('[data-cat]').forEach(b=>{
+    b.onclick = ()=>{ pickedCat = (pickedCat===b.dataset.cat)? null : b.dataset.cat; renderCatChips(); };
+  });
+}
+$('type-toggle').querySelectorAll('[role=tab]').forEach(b=>{
+  b.onclick = ()=>{
+    $('type-toggle').querySelectorAll('[role=tab]').forEach(x=> x.setAttribute('aria-selected', x===b?'true':'false'));
+    currentType = b.dataset.type;
+    pickedCat = null;
+    const v = $('in-merchant').value.trim();
+    guessedCat = v ? classify(v, '', '', currentType) : null;
+    $('amt-display').classList.toggle('income', currentType==='income');
+    renderCatChips();
+  };
+});
+function renderAmt(){
+  const d = $('amt-display');
+  $('amt-text').textContent = amtStr === '' ? '0' : amtStr;
+  d.classList.toggle('zero', amtStr==='' || Number(amtStr)===0);
+  $('btn-save').disabled = !(Number(amtStr) > 0);
+}
+const KEYS = ['1','2','3','4','5','6','7','8','9','.','0','⌫'];
+$('keypad').innerHTML = KEYS.map(k=>`<button data-k="${k}">${k}</button>`).join('');
+$('keypad').querySelectorAll('[data-k]').forEach(b=>{
+  b.onclick = ()=>{
+    const k = b.dataset.k;
+    if(k==='⌫'){ amtStr = amtStr.slice(0,-1); }
+    else if(k==='.'){ if(!amtStr.includes('.')) amtStr = (amtStr||'0') + '.'; }
+    else {
+      const i = amtStr.indexOf('.');
+      if(i>=0 && amtStr.length - i > 2) return;     // 最多两位小数
+      if(i<0 && amtStr.replace('.','').length >= 7) return;
+      amtStr = (amtStr==='0'? '' : amtStr) + k;
+    }
+    renderAmt();
+    if(navigator.vibrate) navigator.vibrate(6);
+  };
+});
+$('in-merchant').oninput = ()=>{
+  const v = $('in-merchant').value.trim();
+  guessedCat = v ? classify(v, '', '', currentType) : null;
+  const noneCat = currentType==='income' ? '其他收入' : '其他';
+  if(guessedCat===noneCat && v.length<2) guessedCat = null;
+  renderCatChips();
+};
+function resetTimeField(){
+  $('in-time').value = localISO(new Date());
+  $('in-time').hidden = true;
+  $('time-toggle').hidden = false;
+  $('time-preview').textContent = '现在';
+}
+$('time-toggle').onclick = ()=>{
+  $('time-toggle').hidden = true;
+  $('in-time').hidden = false;
+  $('in-time').focus();
+};
+$('in-time').onchange = ()=>{
+  const v = $('in-time').value;
+  if(v) $('time-preview').textContent = v.slice(5,10).replace('-','/') + ' ' + v.slice(11,16);
+};
+$('btn-add').onclick = ()=>{
+  amtStr=''; pickedCat=null; guessedCat=null; currentType='expense';
+  $('in-merchant').value='';
+  $('type-toggle').querySelectorAll('[role=tab]').forEach(x=> x.setAttribute('aria-selected', x.dataset.type==='expense'?'true':'false'));
+  $('amt-display').classList.remove('income');
+  resetTimeField();
+  renderAmt(); renderCatChips();
+  sheetOpen('sheet-add');
+};
+$('btn-save').onclick = ()=>{
+  const merchant = $('in-merchant').value.trim();
+  const cat = pickedCat || guessedCat || classify(merchant, '', '', currentType);
+  const rec = addTx({
+    amount: Number(amtStr),
+    merchant: merchant || '未填写',
+    category: cat,
+    time: $('in-time').value || localISO(new Date()),
+    source: 'manual',
+    type: currentType
+  }, {learn: !!(pickedCat && merchant)});
+  sheetClose();
+  if(rec) toast(rec, currentType==='income' ? '已记入收入' : '已记下');
+  else toast(null, '这一笔已经记过了');
+};
+
+/* ============================================================
+   10. CSV 解析（支付宝 / 微信）
+   ============================================================ */
+function parseCSV(text){
+  const rows = []; let row = [], cell = '', q = false;
+  for(let i=0;i<text.length;i++){
+    const ch = text[i];
+    if(q){
+      if(ch === '"'){ if(text[i+1]==='"'){ cell+='"'; i++; } else q = false; }
+      else cell += ch;
+    } else {
+      if(ch === '"') q = true;
+      else if(ch === ','){ row.push(cell); cell=''; }
+      else if(ch === '\n'){ row.push(cell); rows.push(row); row=[]; cell=''; }
+      else if(ch === '\r'){ /* skip */ }
+      else cell += ch;
+    }
+  }
+  if(cell!=='' || row.length){ row.push(cell); rows.push(row); }
+  return rows;
+}
+async function decodeFile(file){
+  const buf = await file.arrayBuffer();
+  // 先试 UTF-8，乱码则退回 GBK（支付宝/微信导出常见 GBK）
+  let s = new TextDecoder('utf-8').decode(buf);
+  const bad = (s.match(/\uFFFD/g)||[]).length;
+  if(bad > 3){
+    try{ s = new TextDecoder('gbk').decode(buf); }
+    catch(e){ try{ s = new TextDecoder('gb18030').decode(buf); }catch(e2){} }
+  }
+  return s.replace(/^\uFEFF/,'');
+}
+function findHeader(rows){
+  for(let i=0;i<Math.min(rows.length, 40);i++){
+    const joined = rows[i].join('|');
+    if(/交易时间|交易创建时间|付款时间/.test(joined) && /金额/.test(joined)) return i;
+  }
+  return -1;
+}
+function colIndex(header, patterns){
+  for(const p of patterns){
+    for(let i=0;i<header.length;i++){
+      if(String(header[i]).replace(/\s/g,'').includes(p)) return i;
+    }
+  }
+  return -1;
+}
+function parseAmount(s){
+  const m = String(s).replace(/[,\s¥￥元]/g,'').match(/-?\d+(\.\d+)?/);
+  return m ? Math.abs(parseFloat(m[0])) : NaN;
+}
+function parseTime(s){
+  let t = String(s).trim().replace(/\//g,'-');
+  const m = t.match(/(\d{4})-(\d{1,2})-(\d{1,2})[ T]?(\d{1,2})?:?(\d{2})?/);
+  if(!m) return null;
+  const d = new Date(+m[1], +m[2]-1, +m[3], +(m[4]||12), +(m[5]||0));
+  if(isNaN(d)) return null;
+  return localISO(d);
+}
+
+async function importFile(file){
+  const text = await decodeFile(file);
+  const rows = parseCSV(text);
+  const hi = findHeader(rows);
+  if(hi < 0) return {file:file.name, err:'找不到表头，可能不是支付宝或微信的账单 CSV'};
+
+  const H = rows[hi].map(x=>String(x).trim());
+  const iTime  = colIndex(H, ['交易时间','付款时间','交易创建时间']);
+  const iAmt   = colIndex(H, ['金额']);
+  const iIO    = colIndex(H, ['收/支','收支']);
+  const iParty = colIndex(H, ['交易对方','对方']);
+  const iGoods = colIndex(H, ['商品说明','商品','商品名称']);
+  const iCat   = colIndex(H, ['交易分类','类型','交易类型']);
+  const iState = colIndex(H, ['交易状态','当前状态']);
+  const iNo    = colIndex(H, ['交易订单号','交易单号','交易号']);
+  const iNote  = colIndex(H, ['备注']);
+
+  if(iTime<0 || iAmt<0) return {file:file.name, err:'账单缺少时间或金额列'};
+
+  let added=0, dup=0, skip=0;
+  for(let r=hi+1; r<rows.length; r++){
+    const row = rows[r];
+    if(!row || row.length < 3) continue;
+    const cell = i => (i>=0 && i<row.length) ? String(row[i]).trim() : '';
+
+    // 支出 / 收入都收，其余（不计收支等）跳过
+    const io = cell(iIO);
+    let txType = 'expense';
+    if(io){
+      if(/^不计/.test(io) || /不计收支/.test(io)){ skip++; continue; }
+      if(/收/.test(io) && !/支/.test(io)) txType = 'income';
+      else if(/支/.test(io)) txType = 'expense';
+      else { skip++; continue; }
+    }
+    const state = cell(iState);
+    if(/关闭|失败|退款成功|已退款|已全额退款|不计收支/.test(state)){ skip++; continue; }
+
+    const amount = parseAmount(cell(iAmt));
+    const time = parseTime(cell(iTime));
+    if(!time || !isFinite(amount) || amount<=0){ skip++; continue; }
+
+    const party = cell(iParty);
+    const goods = cell(iGoods);
+    const merchant = party || goods || '未知商户';
+    const rawCat = cell(iCat);
+
+    // 淘宝/微信这种大平台，商品说明比对方名更有信息量
+    let display = merchant;
+    if(TAOBAO_LIKE.some(k=>merchant.includes(k)) && goods && goods.length>1){
+      display = goods.slice(0,40);
+    }
+    const rec = addTx({
+      amount, merchant: display, time,
+      note: goods && goods!==display ? goods : cell(iNote),
+      rawCat, orderNo: cell(iNo), source:'import', type: txType
+    }, {silent:true});
+    if(rec) added++; else dup++;
+  }
+  return {file:file.name, added, dup, skip};
+}
+
+async function handleFiles(files){
+  const box = $('import-log');
+  box.hidden = false;
+  box.innerHTML = '正在读取…';
+  const out = [];
+  for(const f of files){
+    try{ out.push(await importFile(f)); }
+    catch(e){ out.push({file:f.name, err:'读取失败：'+e.message}); }
+  }
+  saveDB(); render();
+  box.innerHTML = out.map(r=> r.err
+    ? `<div><b>${esc(r.file)}</b><br><span class="bad">${esc(r.err)}</span></div>`
+    : `<div><b>${esc(r.file)}</b><br>新增 ${r.added} 笔（含支出与收入）· 重复跳过 ${r.dup} · 无法识别跳过 ${r.skip}</div>`
+  ).join('<br>') + (storageOK ? '' : '<br><span class="bad">注意：这个环境不能持久保存，刷新会丢。请在自己的浏览器里打开。</span>');
+
+  const pend = pendingReview().length;
+  if(pend){
+    box.innerHTML += `<div style="margin-top:14px"><button class="file-btn" id="review-now">现在确认 ${pend} 笔分类</button></div>`;
+    $('review-now').onclick = ()=>{ sheetClose(); setTimeout(openReview, 260); };
+  }
+}
+$('file-in').onchange = e => { if(e.target.files.length) handleFiles([...e.target.files]); e.target.value=''; };
+$('btn-import').onclick = ()=>{ $('import-log').hidden = true; sheetOpen('sheet-import'); };
+
+const drop = $('drop');
+['dragenter','dragover'].forEach(ev=> drop.addEventListener(ev, e=>{ e.preventDefault(); drop.classList.add('hot'); }));
+['dragleave','drop'].forEach(ev=> drop.addEventListener(ev, e=>{ e.preventDefault(); drop.classList.remove('hot'); }));
+drop.addEventListener('drop', e=>{
+  const fs = [...(e.dataTransfer.files||[])].filter(f=>/\.(csv|txt)$/i.test(f.name));
+  if(fs.length) handleFiles(fs);
+});
+
+/* ============================================================
+   11. URL 自动写入接口
+   给 iOS 快捷指令 / Android 通知监听调用
+   ============================================================ */
+function parseFromText(text){
+  const t = String(text);
+  // 金额：优先 ¥ 后面的数字，其次「金额」附近，最后任意小数
+  let amount = NaN;
+  let m = t.match(/[¥￥]\s*(\d+(?:\.\d{1,2})?)/);
+  if(!m) m = t.match(/(?:金额|付款|支付|消费|扣款|支出)[^\d]{0,6}(\d+(?:\.\d{1,2})?)/);
+  if(!m) m = t.match(/(\d+\.\d{2})\s*元?/);
+  if(!m) m = t.match(/(\d+)\s*元/);
+  if(m) amount = parseFloat(m[1]);
+
+  // 商户：常见通知句式
+  let merchant = '';
+  const pats = [
+    /(?:向|在|于)\s*([^\s,，。；;]{2,24}?)\s*(?:付款|消费|支付|转账)/,
+    /(?:商户|收款方|对方|付款给)[：:]\s*([^\s,，。；;]{2,24})/,
+    /([^\s,，。；;]{2,24}?)(?:交易成功|付款成功|支付成功)/,
+    /(?:来自|收到)\s*([^\s,，。；;]{2,24}?)\s*(?:的转账|的红包|付款)/,
+  ];
+  for(const p of pats){ const r = t.match(p); if(r){ merchant = r[1].trim(); break; } }
+
+  // 收/支方向：默认支出，命中收款类措辞才判为收入
+  let type = 'expense';
+  if(/收款|到账|入账|已存入|工资入账|收到.{0,10}(转账|红包)/.test(t) && !/付款|消费|支付成功|扣款|支出/.test(t)){
+    type = 'income';
+  }
+  return {amount, merchant, type};
+}
+function handleURLIntake(){
+  const q = new URLSearchParams(location.search || (location.hash.includes('?') ? location.hash.slice(location.hash.indexOf('?')) : ''));
+  if(![...q.keys()].length) return;
+
+  let amount = parseFloat(q.get('amount') || q.get('a') || '');
+  let merchant = q.get('merchant') || q.get('m') || '';
+  let type = q.get('type') || q.get('ty') || '';
+  const rawText = q.get('text') || q.get('t') || '';
+
+  if(rawText){
+    const p = parseFromText(rawText);
+    if(!isFinite(amount)) amount = p.amount;
+    if(!merchant) merchant = p.merchant;
+    if(!type && p.type) type = p.type;
+  }
+  // 清掉 URL，避免刷新重复写入
+  try{ history.replaceState(null,'',location.pathname); }catch(e){}
+
+  if(!isFinite(amount) || amount<=0){
+    if(rawText || q.has('amount')) toast(null,'没能识别出金额，请手动记');
+    return;
+  }
+  const rec = addTx({
+    amount,
+    merchant: merchant || '自动记录',
+    category: q.get('cat') || q.get('c') || undefined,
+    time: q.get('time') ? (parseTime(q.get('time')) || undefined) : undefined,
+    source: 'auto',
+    type: type === 'income' ? 'income' : 'expense',
+    note: rawText.slice(0,120)
+  });
+  if(rec) toast(rec, rec.type==='income' ? '自动记入收入' : '自动记入');
+  else toast(null, '这一笔已经记过了');
+}
+
+/* ============================================================
+   12. Toast + 撤销
+   ============================================================ */
+let toastTimer = null, lastRec = null;
+function toast(rec, msg){
+  lastRec = rec;
+  $('toast-amt').textContent = rec ? (rec.type==='income'?'+':'−')+'¥'+money(rec.amount) : '';
+  $('toast-txt').textContent = rec ? (msg + ' · ' + rec.merchant + ' · ' + rec.category) : msg;
+  $('toast-undo').style.display = rec ? '' : 'none';
+  $('toast').classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> $('toast').classList.remove('on'), rec? 4200 : 2600);
+}
+$('toast-undo').onclick = ()=>{
+  if(lastRec) delTx(lastRec.id);
+  $('toast').classList.remove('on');
+};
+
+/* ============================================================
+   13. 交互绑定
+   ============================================================ */
+document.querySelectorAll('[data-period]').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('[data-period]').forEach(x=> x.setAttribute('aria-selected','false'));
+    b.setAttribute('aria-selected','true');
+    period = b.dataset.period; offset = 0; render();
+  };
+});
+$('nav-prev').onclick = ()=>{ offset--; render(); };
+$('nav-next').onclick = ()=>{ if(offset<0){ offset++; render(); } };
+document.addEventListener('click', e=>{
+  const d = e.target.closest('[data-del]');
+  if(d) delTx(d.dataset.del);
+});
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && openSheet) sheetClose(); });
+
+/* 设置 */
+$('btn-settings').onclick = ()=>{
+  const base = location.origin + location.pathname;
+  $('api-code').innerHTML =
+    esc(base) + '?<b>amount</b>=18.5&<b>merchant</b>=瑞幸<br><br>' +
+    '记收入加 <b>&type=income</b>：<br>' +
+    esc(base) + '?<b>amount</b>=8000&<b>merchant</b>=工资&<b>type</b>=income<br><br>' +
+    '或者直接丢原始通知文本，自动识别金额/商户/收支方向：<br>' +
+    esc(base) + '?<b>text</b>=微信支付-向瑞幸咖啡付款18.50元';
+  $('storage-note').textContent = storageOK
+    ? '持久化正常，关掉浏览器数据也在。'
+    : '当前环境不支持持久化保存，刷新会丢数据 —— 请把这个文件放到自己的浏览器或服务器上打开。';
+  sheetOpen('sheet-settings');
+};
+$('btn-export').onclick = ()=>{
+  const blob = new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'liushui-' + localISO(new Date()).slice(0,10) + '.json';
+  a.click(); URL.revokeObjectURL(a.href);
+};
+$('file-restore').onchange = async e=>{
+  const f = e.target.files[0]; if(!f) return;
+  try{
+    const d = JSON.parse(await f.text());
+    let n = 0;
+    (d.tx||[]).forEach(t=>{
+      t.fp = t.fp || fingerprint(t);
+      if(!DB.tx.some(x=>x.fp===t.fp)){ t.id = t.id||uid(); DB.tx.push(t); n++; }
+    });
+    Object.assign(DB.memory, d.memory||{});
+    saveDB(); render(); sheetClose();
+    toast(null, '合并了 '+n+' 笔记录');
+  }catch(err){ toast(null,'备份文件读不出来'); }
+  e.target.value='';
+};
+$('btn-copy-url').onclick = async ()=>{
+  const url = location.origin + location.pathname + '?amount=&merchant=';
+  try{ await navigator.clipboard.writeText(url); toast(null,'接口地址已复制'); }
+  catch(e){ toast(null,'复制失败，请手动选中下面那行'); }
+};
+$('btn-wipe').onclick = ()=>{
+  if(!confirm('清空所有记录和分类记忆？这一步不能撤销。')) return;
+  DB = {tx:[], memory:{}, v:1};
+  saveDB(); render(); sheetClose();
+  toast(null,'已清空');
+};
+
+/* ============================================================
+   14. 启动
+   ============================================================ */
+$('in-time').value = localISO(new Date());
+render();
+handleURLIntake();
+</script>
+</body>
+</html>
