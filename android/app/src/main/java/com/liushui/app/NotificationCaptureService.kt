@@ -50,8 +50,18 @@ class NotificationCaptureService : NotificationListenerService() {
         val normMerchant = NotificationParser.normalize(p.merchant)
         val memKey = if (p.type == "income") "$normMerchant::in" else normMerchant
         val remembered = memory.optString(memKey, "")
-        val category = remembered.ifBlank { if (p.type == "income") "其他收入" else "其他" }
-        val needsReview = remembered.isBlank()
+
+        // 分类优先级：记住的商户 > 关键词规则 > 归到"其他"待确认
+        val category: String
+        val needsReview: Boolean
+        if (remembered.isNotBlank()) {
+            category = remembered
+            needsReview = false
+        } else {
+            val (guessedCat, confident) = Classifier.classify("${p.merchant} ${p.rawText}", p.type)
+            category = guessedCat
+            needsReview = !confident
+        }
 
         val fp = NotificationParser.fingerprint(p.type, time, p.amount, p.merchant)
         for (i in 0 until txArray.length()) {

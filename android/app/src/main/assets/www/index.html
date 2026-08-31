@@ -6,30 +6,31 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="流水">
-<meta name="theme-color" content="#EDEFE9">
+<meta name="theme-color" content="#F1EAD9">
 <title>流水 · 支出记录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#EDEFE9;
-  --paper-2:#E4E7DE;
-  --card:#F6F7F3;
-  --ink:#14170F;
-  --ink-60:#5C6156;
-  --ink-35:#8E9387;
-  --rule:#CDD2C3;
-  --rule-soft:#DCE0D5;
-  --stamp:#C8102E;
-  --moss:#4A5D3A;
+  --paper:#F1EAD9;
+  --paper-2:#E8DEC7;
+  --card:#F8F3E6;
+  --ink:#20324A;
+  --ink-60:#4C5C74;
+  --ink-35:#948B76;
+  --rule:#D9CDB0;
+  --rule-soft:#E6DDC6;
+  --stamp:#AA3A2C;
+  --moss:#3C6E4A;
 
-  --c1:#4A5D3A; --c2:#7C6A46; --c3:#3E5A66; --c4:#8A4B52;
-  --c5:#5B5470; --c6:#6E7C4C; --c7:#8A6B3E; --c8:#455B52;
-  --c9:#7A5566; --c10:#3F4F5E; --c11:#6B6B5C;
+  --c1:#A24B3E; --c2:#4A4038; --c3:#35507A; --c4:#6B4B70;
+  --c5:#2F7A78; --c6:#A67F35; --c7:#3F5E43; --c8:#7A3B4A;
+  --c9:#726A54; --c10:#5C6E52; --c11:#7C7669;
 
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',sans-serif;
+  --serif:'Noto Serif SC','Songti SC','SimSun',var(--sans);
 
   --pad:20px;
   --sat:env(safe-area-inset-top,0px);
@@ -38,7 +39,9 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
 body{
-  background:var(--paper);
+  background:
+    repeating-linear-gradient(180deg, rgba(32,50,74,.045) 0px, rgba(32,50,74,.045) 1px, transparent 1px, transparent 34px),
+    var(--paper);
   color:var(--ink);
   font-family:var(--sans);
   font-size:15px;
@@ -72,7 +75,7 @@ header{
 }
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px}
 .wordmark{display:flex;align-items:baseline;gap:8px}
-.wordmark b{font-size:16px;font-weight:600;letter-spacing:.02em}
+.wordmark b{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:.02em}
 .wordmark span{font-family:var(--mono);font-size:10px;color:var(--ink-35);letter-spacing:.12em}
 .review-badge{
   font-family:var(--mono);font-size:10px;letter-spacing:.06em;
@@ -160,11 +163,18 @@ main{padding:0 var(--pad)}
 .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
 .cats{border-top:1px solid var(--rule)}
 .cat-row{
-  display:grid;grid-template-columns:9px 1fr auto auto;
+  display:grid;grid-template-columns:21px 1fr auto auto;
   align-items:center;gap:11px;
   padding:11px 0;border-bottom:1px solid var(--rule-soft);
 }
-.swatch{width:9px;height:9px;border-radius:0}
+.seal{
+  width:21px;height:21px;border-radius:50%;flex-shrink:0;
+  border:1.3px solid currentColor;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:10.5px;font-weight:700;
+  transform:rotate(-6deg);
+}
+.seal.sm{width:15px;height:15px;font-size:8px;border-width:1.1px;transform:rotate(-4deg)}
 .cat-name{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cat-pct{font-family:var(--mono);font-size:10.5px;color:var(--ink-35);min-width:34px;text-align:right}
 .cat-amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;min-width:76px;text-align:right}
@@ -177,7 +187,7 @@ main{padding:0 var(--pad)}
 .day-head .d{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-60);text-transform:uppercase}
 .day-head .s{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:11px;color:var(--ink-35)}
 .tx{
-  display:grid;grid-template-columns:9px 1fr auto;
+  display:grid;grid-template-columns:21px 1fr auto;
   align-items:center;gap:11px;
   padding:12px 0;border-top:1px solid var(--rule-soft);
   animation:rise .3s cubic-bezier(.2,.7,.2,1) both;
@@ -212,7 +222,7 @@ main{padding:0 var(--pad)}
 .dock{
   position:fixed;left:0;right:0;bottom:0;z-index:40;
   padding:26px var(--pad) calc(12px + var(--sab));
-  background:linear-gradient(to top,var(--paper) 0,var(--paper) 74%,rgba(237,239,233,0) 100%);
+  background:linear-gradient(to top,var(--paper) 0,var(--paper) 74%,rgba(241,234,217,0) 100%);
   display:flex;gap:9px;
 }
 .dock button{
@@ -222,12 +232,11 @@ main{padding:0 var(--pad)}
   transition:transform .1s;
 }
 .dock button:active{transform:scale(.985)}
-.dock .primary{background:var(--ink);color:var(--paper);flex:1.5}
-.dock .ghost{background:var(--paper);color:var(--ink)}
+.dock .primary{background:var(--ink);color:var(--paper)}
 
 /* ---------- 抽屉 ---------- */
 .scrim{
-  position:fixed;inset:0;z-index:50;background:rgba(20,23,15,.32);
+  position:fixed;inset:0;z-index:50;background:rgba(32,50,74,.32);
   opacity:0;pointer-events:none;transition:opacity .22s;
 }
 .scrim.on{opacity:1;pointer-events:auto}
@@ -247,7 +256,7 @@ main{padding:0 var(--pad)}
   display:flex;align-items:center;justify-content:space-between;
   padding:16px 0 12px;border-bottom:1px solid var(--rule);margin-bottom:18px;
 }
-.sheet-head h2{margin:0;font-size:15px;font-weight:600;letter-spacing:.01em}
+.sheet-head h2{margin:0;font-family:var(--serif);font-size:16px;font-weight:700;letter-spacing:.01em}
 .close{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--ink-35);text-transform:uppercase}
 .close:hover{color:var(--ink)}
 
@@ -288,7 +297,6 @@ main{padding:0 var(--pad)}
   font-size:12.5px;display:flex;align-items:center;gap:6px;
   transition:background .12s,border-color .12s;
 }
-.chip i{width:7px;height:7px;display:block}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .chip.guessed{border-color:var(--stamp);border-style:dashed}
 
@@ -309,7 +317,7 @@ main{padding:0 var(--pad)}
 }
 .save-wrap::before{
   content:"";position:absolute;left:0;right:0;top:-14px;height:14px;
-  background:linear-gradient(to top,var(--paper),rgba(237,239,233,0));
+  background:linear-gradient(to top,var(--paper),rgba(241,234,217,0));
   pointer-events:none;
 }
 .save-btn{
@@ -367,7 +375,7 @@ main{padding:0 var(--pad)}
 .toast.on{transform:none;opacity:1;pointer-events:auto}
 .toast .t-amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;font-weight:500}
 .toast .t-txt{font-size:13px;opacity:.82;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.toast .t-undo{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid rgba(237,239,233,.5);padding-bottom:1px;flex-shrink:0}
+.toast .t-undo{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid rgba(241,234,217,.5);padding-bottom:1px;flex-shrink:0}
 
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;transition-duration:.01ms!important}
@@ -388,7 +396,7 @@ main{padding:0 var(--pad)}
   <div class="topbar">
     <div class="wordmark"><b>流水</b><span id="wm-count">0 笔</span><button class="review-badge" id="review-badge" hidden></button></div>
     <button class="icon-btn" id="btn-settings" aria-label="设置与备份">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
     </button>
   </div>
   <div class="periods" role="tablist">
@@ -441,7 +449,6 @@ main{padding:0 var(--pad)}
 
 <div class="dock">
   <button class="primary" id="btn-add">记一笔</button>
-  <button class="ghost" id="btn-import">导入账单</button>
 </div>
 
 <div class="scrim" id="scrim"></div>
@@ -511,6 +518,10 @@ main{padding:0 var(--pad)}
     <h2>设置与备份</h2>
     <button class="close" data-close>关闭</button>
   </div>
+  <button class="row-btn" id="btn-import">
+    <span>导入账单<small>支付宝 / 微信导出的 CSV 账单</small></span>
+    <span class="go">导入</span>
+  </button>
   <button class="row-btn" id="btn-export">
     <span>导出全部数据<small>下载 JSON 备份，含记录和分类记忆</small></span>
     <span class="go">导出</span>
@@ -568,16 +579,24 @@ const CATS = [
   {k:'他',  n:'其他',  c:'var(--c11)'},
 ];
 const INCOME_CATS = [
-  {k:'薪', n:'工资',      c:'var(--moss)'},
-  {k:'兼', n:'兼职',      c:'var(--moss)'},
-  {k:'财', n:'理财',      c:'var(--moss)'},
-  {k:'红', n:'红包',      c:'var(--moss)'},
-  {k:'退', n:'报销/退款', c:'var(--moss)'},
-  {k:'他', n:'其他收入',  c:'var(--moss)'},
+  {k:'薪', n:'工资',      c:'#3C6E4A'},
+  {k:'兼', n:'兼职',      c:'#6E7A3C'},
+  {k:'财', n:'理财',      c:'#2F7A72'},
+  {k:'红', n:'红包',      c:'#C0603F'},
+  {k:'退', n:'报销/退款', c:'#6E6B4A'},
+  {k:'他', n:'其他收入',  c:'#7A8570'},
 ];
 const CAT_COLOR = {};
 CATS.forEach(c=>CAT_COLOR[c.n]=c.c);
 INCOME_CATS.forEach(c=>CAT_COLOR[c.n]=c.c);
+const CAT_CHAR = {};
+CATS.forEach(c=>CAT_CHAR[c.n]=c.k);
+INCOME_CATS.forEach(c=>CAT_CHAR[c.n]=c.k);
+function seal(catName, extraClass){
+  const color = CAT_COLOR[catName] || 'var(--c11)';
+  const char = CAT_CHAR[catName] || catName.slice(0,1);
+  return `<i class="seal${extraClass?' '+extraClass:''}" style="color:${color}">${esc(char)}</i>`;
+}
 
 const INCOME_RULES = {
   '工资':['工资','薪资','薪酬','发薪','代发工资','年终奖','奖金'],
@@ -887,7 +906,7 @@ function render(){
   $('cats-count').textContent = rows.length ? rows.length+' 类' : '';
   $('cats').innerHTML = rows.length ? rows.map(([c,v]) => `
     <div class="cat-row">
-      <i class="swatch" style="background:${CAT_COLOR[c]||'var(--c11)'}"></i>
+      ${seal(c)}
       <span class="cat-name">${esc(c)}</span>
       <span class="cat-pct num">${(v/total*100).toFixed(0)}%</span>
       <span class="cat-amt">${money(v)}</span>
@@ -922,7 +941,7 @@ function render(){
         const isIncome = t.type === 'income';
         return `
         <div class="tx">
-          <i class="swatch" style="background:${CAT_COLOR[t.category]||'var(--c11)'}"></i>
+          ${seal(t.category)}
           <div class="tx-main">
             <div class="tx-merch">${esc(t.merchant)}</div>
             <div class="tx-meta">
@@ -1014,7 +1033,7 @@ function renderReviewCard(){
     <button class="row-btn" id="review-skip" style="margin-top:18px">先跳过<span class="go">下一笔</span></button>
   `;
   $('review-chips').innerHTML = CATLIST.map(c=>
-    `<button class="chip" data-cat="${c.n}"><i style="background:${c.c}"></i>${c.n}</button>`).join('');
+    `<button class="chip" data-cat="${c.n}">${seal(c.n,'sm')}${c.n}</button>`).join('');
   $('review-chips').querySelectorAll('[data-cat]').forEach(b=>{
     b.onclick = ()=>{
       t.category = b.dataset.cat;
@@ -1068,7 +1087,7 @@ function renderCatChips(){
     const on = pickedCat===c.n;
     const guess = !pickedCat && guessedCat===c.n;
     return `<button class="chip${guess?' guessed':''}" aria-pressed="${on}" data-cat="${c.n}">
-      <i style="background:${c.c}"></i>${c.n}</button>`;
+      ${seal(c.n,'sm')}${c.n}</button>`;
   }).join('');
   $('cat-label').textContent = guessedCat && !pickedCat ? '分类 · 已自动判断为「'+guessedCat+'」' : '分类';
   $('cat-chips').querySelectorAll('[data-cat]').forEach(b=>{
@@ -1299,7 +1318,10 @@ async function handleFiles(files){
   }
 }
 $('file-in').onchange = e => { if(e.target.files.length) handleFiles([...e.target.files]); e.target.value=''; };
-$('btn-import').onclick = ()=>{ $('import-log').hidden = true; sheetOpen('sheet-import'); };
+$('btn-import').onclick = ()=>{
+  sheetClose();
+  setTimeout(()=>{ $('import-log').hidden = true; sheetOpen('sheet-import'); }, 260);
+};
 
 const drop = $('drop');
 ['dragenter','dragover'].forEach(ev=> drop.addEventListener(ev, e=>{ e.preventDefault(); drop.classList.add('hot'); }));

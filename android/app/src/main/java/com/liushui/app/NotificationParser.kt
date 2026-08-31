@@ -1,6 +1,6 @@
 package com.liushui.app
 
-data class ParsedTx(val amount: Double, val merchant: String, val type: String)
+data class ParsedTx(val amount: Double, val merchant: String, val type: String, val rawText: String)
 
 /**
  * 和网页里 parseFromText() / normalize() / fingerprint() 保持同样的逻辑，
@@ -46,7 +46,7 @@ object NotificationParser {
         } else {
             "expense"
         }
-        return ParsedTx(amount, merchant.ifBlank { "自动记录" }, type)
+        return ParsedTx(amount, merchant.ifBlank { "自动记录" }, type, text)
     }
 
     fun normalize(s: String?): String {
