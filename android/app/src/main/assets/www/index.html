@@ -5,9 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="流水">
+<meta name="apple-mobile-web-app-title" content="Money Manager">
 <meta name="theme-color" content="#F1EAD9">
-<title>流水 · 支出记录</title>
+<title>Money Manager · 支出记录</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 108 108'%3E%3Crect width='108' height='108' rx='24' fill='%2320324A'/%3E%3Cpath d='M32,82 L32,30 L54,56 L76,30 L76,82' fill='none' stroke='%23F1EAD9' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 108 108'%3E%3Crect width='108' height='108' fill='%2320324A'/%3E%3Cpath d='M32,82 L32,30 L54,56 L76,30 L76,82' fill='none' stroke='%23F1EAD9' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
@@ -74,8 +76,8 @@ header{
   padding:calc(var(--sat) + 14px) var(--pad) 0;
 }
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px}
-.wordmark{display:flex;align-items:baseline;gap:8px}
-.wordmark b{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:.02em}
+.wordmark{display:flex;align-items:baseline;gap:8px;min-width:0}
+.wordmark b{font-family:var(--serif);font-size:15.5px;font-weight:700;letter-spacing:0;white-space:nowrap}
 .wordmark span{font-family:var(--mono);font-size:10px;color:var(--ink-35);letter-spacing:.12em}
 .review-badge{
   font-family:var(--mono);font-size:10px;letter-spacing:.06em;
@@ -394,7 +396,7 @@ main{padding:0 var(--pad)}
 
 <header>
   <div class="topbar">
-    <div class="wordmark"><b>流水</b><span id="wm-count">0 笔</span><button class="review-badge" id="review-badge" hidden></button></div>
+    <div class="wordmark"><b>Money Manager</b><span id="wm-count">0 笔</span><button class="review-badge" id="review-badge" hidden></button></div>
     <button class="icon-btn" id="btn-settings" aria-label="设置与备份">
       <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
     </button>
@@ -627,7 +629,7 @@ const TAOBAO_LIKE = ['淘宝','天猫','支付宝','微信','商户','个体户'
       MainActivity 会注入 window.AndroidBridge，这时改用它
       （原生通知监听服务写的也是同一份数据，这样两边永远同步）
    ============================================================ */
-const KEY = 'liushui.v1';
+const KEY = 'moneymanager.v1';
 const BRIDGE = typeof window.AndroidBridge !== 'undefined' ? window.AndroidBridge : null;
 let memFallback = null;
 
@@ -1465,7 +1467,7 @@ $('btn-export').onclick = ()=>{
   const blob = new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'liushui-' + localISO(new Date()).slice(0,10) + '.json';
+  a.download = 'moneymanager-' + localISO(new Date()).slice(0,10) + '.json';
   a.click(); URL.revokeObjectURL(a.href);
 };
 $('file-restore').onchange = async e=>{

@@ -1,2 +1,2 @@
-rootProject.name = "liushui"
+rootProject.name = "moneymanager"
 include ":app"

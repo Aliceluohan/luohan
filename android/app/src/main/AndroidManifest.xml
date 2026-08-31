@@ -6,7 +6,7 @@
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/Theme.Liushui">
+        android:theme="@style/Theme.MoneyManager">
 
         <activity
             android:name=".MainActivity"
@@ -21,7 +21,7 @@
         <service
             android:name=".NotificationCaptureService"
             android:exported="true"
-            android:label="流水记账监听"
+            android:label="Money Manager 记账监听"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
