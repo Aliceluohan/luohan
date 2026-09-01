@@ -25,10 +25,15 @@
   --rule-soft:#E6DDC6;
   --stamp:#AA3A2C;
   --moss:#3C6E4A;
+  --paper-rgb:241,234,217;
+  --ink-rgb:32,50,74;
 
   --c1:#A24B3E; --c2:#4A4038; --c3:#35507A; --c4:#6B4B70;
   --c5:#2F7A78; --c6:#A67F35; --c7:#3F5E43; --c8:#7A3B4A;
   --c9:#726A54; --c10:#5C6E52; --c11:#7C7669;
+
+  --i1:#3C6E4A; --i2:#6E7A3C; --i3:#2F7A72;
+  --i4:#C0603F; --i5:#6E6B4A; --i6:#7A8570;
 
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',sans-serif;
@@ -38,12 +43,32 @@
   --sat:env(safe-area-inset-top,0px);
   --sab:env(safe-area-inset-bottom,0px);
 }
+/* ---------- 主题：可爱风粉色 ---------- */
+:root[data-theme="pink"]{
+  --paper:#FDEEF2;
+  --paper-2:#F9DCE6;
+  --card:#FFF6F9;
+  --ink:#6B3D55;
+  --ink-60:#8C5D74;
+  --ink-35:#BB92A3;
+  --rule:#F0C7D6;
+  --rule-soft:#F7DEE8;
+  --stamp:#E8598A;
+  --moss:#3FA6A0;
+  --paper-rgb:253,238,242;
+  --ink-rgb:107,61,85;
+
+  --c1:#E86A82; --c2:#A9727E; --c3:#7C93D6; --c4:#B876C7;
+  --c5:#4FB6AE; --c6:#E6A15C; --c7:#6FAE7C; --c8:#D65C6E;
+  --c9:#BE94A0; --c10:#6FB3D9; --c11:#B7A3AC;
+
+  --i1:#4FB89C; --i2:#8CB86A; --i3:#3FA6A0;
+  --i4:#E85C7A; --i5:#9BAE7A; --i6:#7FBFAE;
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
 body{
-  background:
-    repeating-linear-gradient(180deg, rgba(32,50,74,.045) 0px, rgba(32,50,74,.045) 1px, transparent 1px, transparent 34px),
-    var(--paper);
+  background:var(--paper);
   color:var(--ink);
   font-family:var(--sans);
   font-size:15px;
@@ -128,13 +153,6 @@ main{padding:0 var(--pad)}
 .total .yen{font-size:.4em;color:var(--stamp);margin-top:.22em;letter-spacing:0}
 .total .cents{font-size:.5em;margin-top:.16em;margin-left:-.06em;color:var(--ink-60);letter-spacing:-.02em}
 
-.stats{
-  display:flex;flex-wrap:wrap;gap:0 22px;margin-top:16px;
-}
-.stat{display:flex;align-items:baseline;gap:7px}
-.stat b{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:500}
-.stat span{font-size:11.5px;color:var(--ink-35)}
-
 /* ---------- 收支对比 ---------- */
 .io-bars{margin-top:20px;border-top:1px solid var(--rule);padding-top:14px}
 .io-bar-row{display:flex;align-items:center;gap:10px;padding:5px 0}
@@ -145,8 +163,14 @@ main{padding:0 var(--pad)}
 .io-bar-row.balance{border-top:1px solid var(--rule-soft);margin-top:6px;padding-top:9px;justify-content:flex-end}
 .io-bar-row.balance .io-label{width:auto;margin-right:auto}
 
-/* ---------- 签名元素：占比刻度条 ---------- */
+/* ---------- 签名元素：占比刻度条 / 圆环 ---------- */
 .bar-wrap{margin-top:22px}
+.comp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.view-toggle{display:flex;border:1px solid var(--rule)}
+.view-toggle button{width:27px;height:23px;display:grid;place-items:center;color:var(--ink-35);transition:background .15s,color .15s}
+.view-toggle button+button{border-left:1px solid var(--rule-soft)}
+.view-toggle button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.view-toggle svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round}
 .bar{
   display:flex;height:26px;width:100%;
   background:var(--paper-2);
@@ -159,6 +183,13 @@ main{padding:0 var(--pad)}
   padding-top:5px;margin-top:0;
 }
 .bar-ticks span{font-family:var(--mono);font-size:9.5px;color:var(--ink-35);letter-spacing:.06em}
+
+.ring-box{position:relative;display:flex;align-items:center;justify-content:center;padding:6px 0 2px}
+.ring-box svg{width:158px;height:158px}
+.ring-box circle{transition:stroke-dasharray .5s cubic-bezier(.2,.7,.2,1),stroke-dashoffset .5s cubic-bezier(.2,.7,.2,1)}
+.ring-center{position:absolute;text-align:center;pointer-events:none}
+.ring-center b{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;font-weight:600;color:var(--ink)}
+.ring-center span{font-family:var(--mono);font-size:10px;color:var(--ink-35);letter-spacing:.04em}
 
 /* ---------- 分类排行 ---------- */
 .section{margin-top:34px}
@@ -174,9 +205,9 @@ main{padding:0 var(--pad)}
   border:1.3px solid currentColor;
   display:flex;align-items:center;justify-content:center;
   font-family:var(--serif);font-size:10.5px;font-weight:700;
-  transform:rotate(-6deg);
+  line-height:1;text-align:center;
 }
-.seal.sm{width:15px;height:15px;font-size:8px;border-width:1.1px;transform:rotate(-4deg)}
+.seal.sm{width:15px;height:15px;font-size:8px;border-width:1.1px}
 .cat-name{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cat-pct{font-family:var(--mono);font-size:10.5px;color:var(--ink-35);min-width:34px;text-align:right}
 .cat-amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;min-width:76px;text-align:right}
@@ -224,7 +255,7 @@ main{padding:0 var(--pad)}
 .dock{
   position:fixed;left:0;right:0;bottom:0;z-index:40;
   padding:26px var(--pad) calc(12px + var(--sab));
-  background:linear-gradient(to top,var(--paper) 0,var(--paper) 74%,rgba(241,234,217,0) 100%);
+  background:linear-gradient(to top,var(--paper) 0,var(--paper) 74%,rgba(var(--paper-rgb),0) 100%);
   display:flex;gap:9px;
 }
 .dock button{
@@ -238,7 +269,7 @@ main{padding:0 var(--pad)}
 
 /* ---------- 抽屉 ---------- */
 .scrim{
-  position:fixed;inset:0;z-index:50;background:rgba(32,50,74,.32);
+  position:fixed;inset:0;z-index:50;background:rgba(var(--ink-rgb),.32);
   opacity:0;pointer-events:none;transition:opacity .22s;
 }
 .scrim.on{opacity:1;pointer-events:auto}
@@ -319,7 +350,7 @@ main{padding:0 var(--pad)}
 }
 .save-wrap::before{
   content:"";position:absolute;left:0;right:0;top:-14px;height:14px;
-  background:linear-gradient(to top,var(--paper),rgba(241,234,217,0));
+  background:linear-gradient(to top,var(--paper),rgba(var(--paper-rgb),0));
   pointer-events:none;
 }
 .save-btn{
@@ -356,6 +387,17 @@ main{padding:0 var(--pad)}
 .row-btn small{display:block;color:var(--ink-35);font-size:11.5px;margin-top:2px;line-height:1.5}
 .row-btn .go{font-family:var(--mono);font-size:12px;color:var(--ink-35)}
 .row-btn:hover .go{color:var(--ink)}
+.row-block{padding:15px 0;border-bottom:1px solid var(--rule-soft)}
+.row-block>span{display:block;margin-bottom:11px}
+.row-block>span small{display:block;color:var(--ink-35);font-size:11.5px;margin-top:2px;line-height:1.5}
+.theme-row{display:flex;flex-wrap:wrap;gap:8px}
+.theme-chip{
+  padding:8px 12px;border:1px solid var(--rule);background:var(--card);
+  font-size:12.5px;display:flex;align-items:center;gap:7px;
+  transition:background .12s,border-color .12s;
+}
+.theme-chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.theme-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
 .code{
   font-family:var(--mono);font-size:11px;background:var(--card);
   border:1px solid var(--rule);padding:11px;margin-top:9px;
@@ -377,7 +419,7 @@ main{padding:0 var(--pad)}
 .toast.on{transform:none;opacity:1;pointer-events:auto}
 .toast .t-amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;font-weight:500}
 .toast .t-txt{font-size:13px;opacity:.82;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.toast .t-undo{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid rgba(241,234,217,.5);padding-bottom:1px;flex-shrink:0}
+.toast .t-undo{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid rgba(var(--paper-rgb),.5);padding-bottom:1px;flex-shrink:0}
 
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;transition-duration:.01ms!important}
@@ -402,6 +444,7 @@ main{padding:0 var(--pad)}
     </button>
   </div>
   <div class="periods" role="tablist">
+    <button role="tab" data-period="day" aria-selected="false">本日</button>
     <button role="tab" data-period="week" aria-selected="true">本周</button>
     <button role="tab" data-period="month" aria-selected="false">本月</button>
     <button role="tab" data-period="all" aria-selected="false">全部</button>
@@ -418,11 +461,29 @@ main{padding:0 var(--pad)}
       </div>
     </div>
     <div class="total" id="total"><span class="yen">¥</span><span id="total-int">0</span><span class="cents" id="total-cents">.00</span></div>
-    <div class="stats" id="stats"></div>
     <div class="io-bars" id="io-bars"></div>
     <div class="bar-wrap">
-      <div class="bar" id="bar"></div>
-      <div class="bar-ticks" id="bar-ticks"></div>
+      <div class="comp-head">
+        <span class="eyebrow">支出占比</span>
+        <div class="view-toggle" id="view-toggle" role="tablist">
+          <button data-view="bar" aria-selected="true" aria-label="横条视图">
+            <svg viewBox="0 0 24 24"><path d="M6 20V12M12 20V6M18 20V14"/></svg>
+          </button>
+          <button data-view="ring" aria-selected="false" aria-label="圆环视图">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="comp-bar">
+        <div class="bar" id="bar"></div>
+        <div class="bar-ticks" id="bar-ticks"></div>
+      </div>
+      <div id="comp-ring" hidden>
+        <div class="ring-box">
+          <svg viewBox="0 0 120 120" id="ring-svg"></svg>
+          <div class="ring-center" id="ring-center"></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -520,6 +581,10 @@ main{padding:0 var(--pad)}
     <h2>设置与备份</h2>
     <button class="close" data-close>关闭</button>
   </div>
+  <div class="row-block">
+    <span>个性化界面<small>换一套配色，布局不变</small></span>
+    <div class="theme-row" id="theme-row"></div>
+  </div>
   <button class="row-btn" id="btn-import">
     <span>导入账单<small>支付宝 / 微信导出的 CSV 账单</small></span>
     <span class="go">导入</span>
@@ -581,12 +646,12 @@ const CATS = [
   {k:'他',  n:'其他',  c:'var(--c11)'},
 ];
 const INCOME_CATS = [
-  {k:'薪', n:'工资',      c:'#3C6E4A'},
-  {k:'兼', n:'兼职',      c:'#6E7A3C'},
-  {k:'财', n:'理财',      c:'#2F7A72'},
-  {k:'红', n:'红包',      c:'#C0603F'},
-  {k:'退', n:'报销/退款', c:'#6E6B4A'},
-  {k:'他', n:'其他收入',  c:'#7A8570'},
+  {k:'薪', n:'工资',      c:'var(--i1)'},
+  {k:'兼', n:'兼职',      c:'var(--i2)'},
+  {k:'财', n:'理财',      c:'var(--i3)'},
+  {k:'红', n:'红包',      c:'var(--i4)'},
+  {k:'退', n:'报销/退款', c:'var(--i5)'},
+  {k:'他', n:'其他收入',  c:'var(--i6)'},
 ];
 const CAT_COLOR = {};
 CATS.forEach(c=>CAT_COLOR[c.n]=c.c);
@@ -634,12 +699,12 @@ const BRIDGE = typeof window.AndroidBridge !== 'undefined' ? window.AndroidBridg
 let memFallback = null;
 
 function loadDB(){
-  const blank = {tx:[], memory:{}, v:1};
+  const blank = {tx:[], memory:{}, pref:{}, v:1};
   try{
     const raw = BRIDGE ? BRIDGE.load() : localStorage.getItem(KEY);
     if(!raw) return blank;
     const d = JSON.parse(raw);
-    return {tx:Array.isArray(d.tx)?d.tx:[], memory:d.memory||{}, v:1};
+    return {tx:Array.isArray(d.tx)?d.tx:[], memory:d.memory||{}, pref:d.pref||{}, v:1};
   }catch(e){
     if(memFallback) return memFallback;
     return blank;
@@ -667,6 +732,53 @@ window.reloadFromBridge = function(){
   DB = loadDB();
   render();
 };
+
+function getCompView(){ return (DB.pref && DB.pref.compView === 'ring') ? 'ring' : 'bar'; }
+function setCompView(v){
+  DB.pref = DB.pref || {};
+  DB.pref.compView = v;
+  saveDB();
+}
+function applyCompView(){
+  const v = getCompView();
+  document.querySelectorAll('#view-toggle [data-view]').forEach(b=>{
+    b.setAttribute('aria-selected', b.dataset.view===v ? 'true' : 'false');
+  });
+  $('comp-bar').hidden = v !== 'bar';
+  $('comp-ring').hidden = v !== 'ring';
+}
+
+// 界面主题：每套只换 CSS 变量的取值，布局/字体/图标都不变
+const THEMES = [
+  {id:'default', n:'存折', dot:'#AA3A2C'},
+  {id:'pink',    n:'粉萌', dot:'#E8598A'},
+];
+function getTheme(){
+  const t = DB.pref && DB.pref.theme;
+  return THEMES.some(x=>x.id===t) ? t : 'default';
+}
+function setTheme(t){
+  DB.pref = DB.pref || {};
+  DB.pref.theme = t;
+  saveDB();
+  applyTheme();
+}
+function applyTheme(){
+  const t = getTheme();
+  document.documentElement.setAttribute('data-theme', t);
+  document.querySelectorAll('#theme-row [data-theme]').forEach(b=>{
+    b.setAttribute('aria-pressed', b.dataset.theme===t ? 'true' : 'false');
+  });
+}
+function renderThemeRow(){
+  $('theme-row').innerHTML = THEMES.map(t=>
+    `<button class="theme-chip" data-theme="${t.id}" aria-pressed="false">
+      <i class="theme-dot" style="background:${t.dot}"></i>${t.n}</button>`).join('');
+  $('theme-row').querySelectorAll('[data-theme]').forEach(b=>{
+    b.onclick = ()=> setTheme(b.dataset.theme);
+  });
+  applyTheme();
+}
 
 /* ============================================================
    3. 自动分类引擎
@@ -811,6 +923,13 @@ function getRange(){
   if(period === 'all'){
     return {from:new Date(0), to:new Date(3e12), label:'全部记录', days:null};
   }
+  if(period === 'day'){
+    const s = new Date(now); s.setHours(0,0,0,0); s.setDate(s.getDate() + offset);
+    const e = new Date(s); e.setDate(e.getDate()+1);
+    const wd = ['周日','周一','周二','周三','周四','周五','周六'][s.getDay()];
+    const label = (s.getMonth()+1)+'月'+s.getDate()+'日 · '+wd;
+    return {from:s, to:e, label, days:1};
+  }
   if(period === 'week'){
     const s = startOfWeek(now); s.setDate(s.getDate() + offset*7);
     const e = new Date(s); e.setDate(e.getDate()+7);
@@ -853,25 +972,6 @@ function render(){
   $('total-int').textContent = parts[0];
   $('total-cents').textContent = '.' + parts[1];
 
-  // 统计
-  let elapsed;
-  if(period==='all'){
-    if(DB.tx.length){
-      const first = DB.tx.reduce((m,t)=> new Date(t.time)<new Date(m.time)?t:m);
-      elapsed = Math.max(1, Math.ceil((Date.now()-new Date(first.time))/864e5));
-    } else elapsed = 1;
-  } else if(offset===0){
-    elapsed = Math.max(1, Math.ceil((Date.now()-r.from)/864e5));
-  } else elapsed = r.days;
-
-  const stats = [
-    ['¥'+money(total/elapsed), '日均'],
-    [String(list.length), '笔'],
-    [list.length? '¥'+money(total/list.length) : '—', '每笔'],
-  ];
-  $('stats').innerHTML = stats.map(([b,s])=>
-    `<span class="stat"><b>${b}</b><span>${s}</span></span>`).join('');
-
   // 收支对比
   const maxIO = Math.max(total, incomeTotal, 1);
   $('io-bars').innerHTML = `
@@ -903,6 +1003,7 @@ function render(){
     $('bar').innerHTML = '';
     $('bar-ticks').innerHTML = '<span>还没有数据</span><span>—</span><span></span>';
   }
+  renderRing(rows, total);
 
   // 分类排行
   $('cats-count').textContent = rows.length ? rows.length+' 类' : '';
@@ -960,6 +1061,33 @@ function render(){
 
   updateReviewBadge();
 }
+
+// 圆环视图：跟横条用的是同一份 rows 数据，只是画法不同
+function renderRing(rows, total){
+  const R = 50, CX = 60, CY = 60, SW = 14;
+  const circ = 2 * Math.PI * R;
+  const track = `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="var(--paper-2)" stroke-width="${SW}"/>`;
+  let segs = '';
+  if(total > 0){
+    let cursor = 0;
+    segs = rows.map(([c,v])=>{
+      const dash = v/total*circ;
+      const html = `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${CAT_COLOR[c]||'var(--c11)'}" stroke-width="${SW}"
+        stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}" stroke-dashoffset="${(-cursor).toFixed(2)}"
+        transform="rotate(-90 ${CX} ${CY})"><title>${esc(c)} ${(v/total*100).toFixed(0)}%</title></circle>`;
+      cursor += dash;
+      return html;
+    }).join('');
+  }
+  $('ring-svg').innerHTML = track + segs;
+  if(total > 0){
+    const top = rows[0];
+    $('ring-center').innerHTML = `<b>${(top[1]/total*100).toFixed(0)}%</b><span>${esc(top[0])}</span>`;
+  } else {
+    $('ring-center').innerHTML = `<b>—</b><span>还没有数据</span>`;
+  }
+}
+
 function esc(s){
   return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
@@ -1429,6 +1557,9 @@ document.querySelectorAll('[data-period]').forEach(b=>{
 });
 $('nav-prev').onclick = ()=>{ offset--; render(); };
 $('nav-next').onclick = ()=>{ if(offset<0){ offset++; render(); } };
+document.querySelectorAll('#view-toggle [data-view]').forEach(b=>{
+  b.onclick = ()=>{ setCompView(b.dataset.view); applyCompView(); };
+});
 document.addEventListener('click', e=>{
   const d = e.target.closest('[data-del]');
   if(d) delTx(d.dataset.del);
@@ -1501,6 +1632,8 @@ $('btn-wipe').onclick = ()=>{
    14. 启动
    ============================================================ */
 $('in-time').value = localISO(new Date());
+applyCompView();
+renderThemeRow();
 render();
 handleURLIntake();
 </script>
