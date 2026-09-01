@@ -65,6 +65,28 @@
   --i1:#4FB89C; --i2:#8CB86A; --i3:#3FA6A0;
   --i4:#E85C7A; --i5:#9BAE7A; --i6:#7FBFAE;
 }
+/* ---------- 主题：极简黑白 ---------- */
+:root[data-theme="mono"]{
+  --paper:#FCFCFA;
+  --paper-2:#EFEFEA;
+  --card:#F6F6F3;
+  --ink:#1A1A18;
+  --ink-60:#5C5C56;
+  --ink-35:#9C9C94;
+  --rule:#E2E2DC;
+  --rule-soft:#EDEDE8;
+  --stamp:#7A3D3A;
+  --moss:#3D5F48;
+  --paper-rgb:252,252,250;
+  --ink-rgb:26,26,24;
+
+  --c1:#6B5D52; --c2:#4A5259; --c3:#52606B; --c4:#5F5259;
+  --c5:#4F615C; --c6:#6B6152; --c7:#5A6152; --c8:#6B5259;
+  --c9:#5C5C58; --c10:#525F6B; --c11:#8C8C86;
+
+  --i1:#4A5F4F; --i2:#5C5F47; --i3:#47595C;
+  --i4:#6B4A47; --i5:#5C5947; --i6:#59605A;
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
 body{
@@ -108,13 +130,20 @@ header{
   font-family:var(--mono);font-size:10px;letter-spacing:.06em;
   color:var(--stamp);border:1px solid var(--stamp);padding:2px 7px;
 }
+.topbar-actions{display:flex;gap:8px}
 .icon-btn{
+  position:relative;
   width:34px;height:34px;border:1px solid var(--rule);border-radius:0;
   display:grid;place-items:center;color:var(--ink-60);
   transition:background .15s,color .15s;
 }
 .icon-btn:hover,.icon-btn:focus-visible{background:var(--paper-2);color:var(--ink)}
 .icon-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6}
+.icon-btn .dot{
+  position:absolute;top:6px;right:6px;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--stamp);border:1.5px solid var(--paper);
+}
 
 /* 周期切换 —— 刻度式 */
 .periods{display:flex;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
@@ -191,6 +220,12 @@ main{padding:0 var(--pad)}
 .ring-center b{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;font-weight:600;color:var(--ink)}
 .ring-center span{font-family:var(--mono);font-size:10px;color:var(--ink-35);letter-spacing:.04em}
 
+.trend-box{padding:8px 0 2px}
+.trend-box svg{width:100%;height:auto;display:block}
+.trend-legend{display:flex;gap:16px;justify-content:center;margin-top:2px}
+.trend-legend span{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;color:var(--ink-35);letter-spacing:.04em}
+.trend-legend i{width:8px;height:8px;border-radius:50%;display:block}
+
 /* ---------- 分类排行 ---------- */
 .section{margin-top:34px}
 .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
@@ -204,10 +239,10 @@ main{padding:0 var(--pad)}
   width:21px;height:21px;border-radius:50%;flex-shrink:0;
   border:1.3px solid currentColor;
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--serif);font-size:10.5px;font-weight:700;
-  line-height:1;text-align:center;
 }
-.seal.sm{width:15px;height:15px;font-size:8px;border-width:1.1px}
+.seal svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.seal.sm{width:15px;height:15px;border-width:1.1px}
+.seal.sm svg{width:9px;height:9px;stroke-width:2.1}
 .cat-name{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cat-pct{font-family:var(--mono);font-size:10.5px;color:var(--ink-35);min-width:34px;text-align:right}
 .cat-amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;min-width:76px;text-align:right}
@@ -246,10 +281,12 @@ main{padding:0 var(--pad)}
 .empty p{margin:0 0 4px;font-size:14px}
 .empty small{color:var(--ink-35);font-size:12px}
 
-.report-text{
-  font-size:13.5px;line-height:1.75;color:var(--ink-60);
-  margin:0;padding:14px 16px;background:var(--card);border:1px solid var(--rule);
-}
+.report-row{padding:16px 0;border-bottom:1px solid var(--rule-soft)}
+.report-row:first-child{padding-top:0}
+.report-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.report-tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--stamp);border:1px solid var(--stamp);padding:2px 6px}
+.report-period{font-family:var(--mono);font-size:11px;color:var(--ink-35)}
+.report-row .report-text{margin:0;font-size:13.5px;line-height:1.7;color:var(--ink-60)}
 
 /* ---------- 底部动作条 ---------- */
 .dock{
@@ -439,9 +476,15 @@ main{padding:0 var(--pad)}
 <header>
   <div class="topbar">
     <div class="wordmark"><b>Money Manager</b><span id="wm-count">0 笔</span><button class="review-badge" id="review-badge" hidden></button></div>
-    <button class="icon-btn" id="btn-settings" aria-label="设置与备份">
-      <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-    </button>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="btn-reports" aria-label="周报与月报小结">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <i class="dot" id="reports-dot" hidden></i>
+      </button>
+      <button class="icon-btn" id="btn-settings" aria-label="设置与备份">
+        <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+    </div>
   </div>
   <div class="periods" role="tablist">
     <button role="tab" data-period="day" aria-selected="false">本日</button>
@@ -464,13 +507,16 @@ main{padding:0 var(--pad)}
     <div class="io-bars" id="io-bars"></div>
     <div class="bar-wrap">
       <div class="comp-head">
-        <span class="eyebrow">支出占比</span>
+        <span class="eyebrow" id="comp-title">支出占比</span>
         <div class="view-toggle" id="view-toggle" role="tablist">
           <button data-view="bar" aria-selected="true" aria-label="横条视图">
             <svg viewBox="0 0 24 24"><path d="M6 20V12M12 20V6M18 20V14"/></svg>
           </button>
           <button data-view="ring" aria-selected="false" aria-label="圆环视图">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/></svg>
+          </button>
+          <button data-view="line" aria-selected="false" aria-label="趋势视图" id="btn-view-line" hidden>
+            <svg viewBox="0 0 24 24"><path d="M4 16l5-6 4 4 7-9"/></svg>
           </button>
         </div>
       </div>
@@ -484,14 +530,16 @@ main{padding:0 var(--pad)}
           <div class="ring-center" id="ring-center"></div>
         </div>
       </div>
+      <div id="comp-line" hidden>
+        <div class="trend-box">
+          <svg viewBox="0 0 300 130" id="trend-svg"></svg>
+        </div>
+        <div class="trend-legend">
+          <span><i style="background:var(--stamp)"></i>支出</span>
+          <span><i style="background:var(--moss)"></i>收入</span>
+        </div>
+      </div>
     </div>
-  </section>
-
-  <section class="section" id="report-section">
-    <div class="section-head">
-      <span class="eyebrow">小结</span>
-    </div>
-    <p class="report-text" id="report-text"></p>
   </section>
 
   <section class="section" id="cats-section">
@@ -575,6 +623,16 @@ main{padding:0 var(--pad)}
   <div style="height:calc(20px + var(--sab))"></div>
 </div>
 
+<!-- 周报 / 月报小结 -->
+<div class="sheet" id="sheet-reports" role="dialog" aria-label="周报与月报小结">
+  <div class="sheet-head">
+    <h2>小结</h2>
+    <button class="close" data-close>关闭</button>
+  </div>
+  <div id="reports-body"></div>
+  <div style="height:calc(20px + var(--sab))"></div>
+</div>
+
 <!-- 设置 -->
 <div class="sheet" id="sheet-settings" role="dialog" aria-label="设置与备份">
   <div class="sheet-head">
@@ -582,7 +640,7 @@ main{padding:0 var(--pad)}
     <button class="close" data-close>关闭</button>
   </div>
   <div class="row-block">
-    <span>个性化界面<small>换一套配色，布局不变</small></span>
+    <span>个性化界面</span>
     <div class="theme-row" id="theme-row"></div>
   </div>
   <button class="row-btn" id="btn-import">
@@ -614,7 +672,6 @@ main{padding:0 var(--pad)}
     <span class="go">清空</span>
   </button>
   <div class="log" style="border-top:1px solid var(--rule);margin-top:20px">
-    数据只存在这台设备的浏览器里，不上传任何地方。<br>
     <span id="storage-note"></span>
   </div>
   <div style="height:calc(20px + var(--sab))"></div>
@@ -632,37 +689,54 @@ main{padding:0 var(--pad)}
 /* ============================================================
    1. 分类体系
    ============================================================ */
+const ICON_CUP = '<path d="M5 9h10v5a5 5 0 01-5 5 5 5 0 01-5-5V9z"/><path d="M15 10h1.5a1.8 1.8 0 010 3.5H15"/>';
+const ICON_CAR = '<rect x="4" y="10" width="16" height="6" rx="2"/><circle cx="8" cy="18" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="18" r="1.5" fill="currentColor" stroke="none"/>';
+const ICON_BAG = '<path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 016 0v2"/>';
+const ICON_BULB = '<circle cx="12" cy="10" r="5"/><path d="M9.5 18h5M10 20.5h4"/>';
+const ICON_PLAY = '<circle cx="12" cy="12" r="8"/><path d="M10 9l5 3-5 3V9z"/>';
+const ICON_HOUSE = '<path d="M4 12l8-7 8 7"/><path d="M6.5 11v8h11v-8"/>';
+const ICON_WIFI = '<path d="M5 9a11 11 0 0114 0"/><path d="M8 12.5a6.5 6.5 0 018 0"/><circle cx="12" cy="17" r="1.3" fill="currentColor" stroke="none"/>';
+const ICON_CROSS = '<circle cx="12" cy="12" r="8"/><path d="M12 8.5v7M8.5 12h7"/>';
+const ICON_BOOK = '<path d="M3 6s3-1.5 9-1.5S21 6 21 6v12s-3-1.5-9-1.5-9 1.5-9 1.5V6z"/><path d="M12 4.5v13.5"/>';
+const ICON_SWAP = '<path d="M4 8h13l-3-3M20 16H7l3 3"/>';
+const ICON_DOTS = '<circle cx="7" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="17" cy="12" r="1.4" fill="currentColor" stroke="none"/>';
+const ICON_BRIEFCASE = '<rect x="4" y="9" width="16" height="10" rx="1.5"/><path d="M9 9V7a2 2 0 012-2h2a2 2 0 012 2v2"/>';
+const ICON_CLOCK = '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>';
+const ICON_TREND = '<path d="M4 16l5-5 4 4 7-8"/><path d="M15 7h5v5"/>';
+const ICON_ENVELOPE = '<rect x="3" y="6" width="18" height="12" rx="1.5"/><path d="M3 7l9 6 9-6"/>';
+const ICON_UNDO = '<path d="M8 8L4 12l4 4"/><path d="M4 12h11a5 5 0 010 10h-1"/>';
+
 const CATS = [
-  {k:'食',  n:'餐饮',  c:'var(--c1)'},
-  {k:'行',  n:'交通',  c:'var(--c3)'},
-  {k:'购',  n:'购物',  c:'var(--c4)'},
-  {k:'日',  n:'日用',  c:'var(--c6)'},
-  {k:'乐',  n:'娱乐',  c:'var(--c5)'},
-  {k:'住',  n:'居住',  c:'var(--c2)'},
-  {k:'讯',  n:'通信',  c:'var(--c10)'},
-  {k:'医',  n:'医疗',  c:'var(--c8)'},
-  {k:'学',  n:'学习',  c:'var(--c7)'},
-  {k:'转',  n:'转账',  c:'var(--c9)'},
-  {k:'他',  n:'其他',  c:'var(--c11)'},
+  {k:'食',  n:'餐饮',  c:'var(--c1)',  icon:ICON_CUP},
+  {k:'行',  n:'交通',  c:'var(--c3)',  icon:ICON_CAR},
+  {k:'购',  n:'购物',  c:'var(--c4)',  icon:ICON_BAG},
+  {k:'日',  n:'日用',  c:'var(--c6)',  icon:ICON_BULB},
+  {k:'乐',  n:'娱乐',  c:'var(--c5)',  icon:ICON_PLAY},
+  {k:'住',  n:'居住',  c:'var(--c2)',  icon:ICON_HOUSE},
+  {k:'讯',  n:'通信',  c:'var(--c10)', icon:ICON_WIFI},
+  {k:'医',  n:'医疗',  c:'var(--c8)',  icon:ICON_CROSS},
+  {k:'学',  n:'学习',  c:'var(--c7)',  icon:ICON_BOOK},
+  {k:'转',  n:'转账',  c:'var(--c9)',  icon:ICON_SWAP},
+  {k:'他',  n:'其他',  c:'var(--c11)', icon:ICON_DOTS},
 ];
 const INCOME_CATS = [
-  {k:'薪', n:'工资',      c:'var(--i1)'},
-  {k:'兼', n:'兼职',      c:'var(--i2)'},
-  {k:'财', n:'理财',      c:'var(--i3)'},
-  {k:'红', n:'红包',      c:'var(--i4)'},
-  {k:'退', n:'报销/退款', c:'var(--i5)'},
-  {k:'他', n:'其他收入',  c:'var(--i6)'},
+  {k:'薪', n:'工资',      c:'var(--i1)', icon:ICON_BRIEFCASE},
+  {k:'兼', n:'兼职',      c:'var(--i2)', icon:ICON_CLOCK},
+  {k:'财', n:'理财',      c:'var(--i3)', icon:ICON_TREND},
+  {k:'红', n:'红包',      c:'var(--i4)', icon:ICON_ENVELOPE},
+  {k:'退', n:'报销/退款', c:'var(--i5)', icon:ICON_UNDO},
+  {k:'他', n:'其他收入',  c:'var(--i6)', icon:ICON_DOTS},
 ];
 const CAT_COLOR = {};
 CATS.forEach(c=>CAT_COLOR[c.n]=c.c);
 INCOME_CATS.forEach(c=>CAT_COLOR[c.n]=c.c);
-const CAT_CHAR = {};
-CATS.forEach(c=>CAT_CHAR[c.n]=c.k);
-INCOME_CATS.forEach(c=>CAT_CHAR[c.n]=c.k);
+const CAT_ICON = {};
+CATS.forEach(c=>CAT_ICON[c.n]=c.icon);
+INCOME_CATS.forEach(c=>CAT_ICON[c.n]=c.icon);
 function seal(catName, extraClass){
   const color = CAT_COLOR[catName] || 'var(--c11)';
-  const char = CAT_CHAR[catName] || catName.slice(0,1);
-  return `<i class="seal${extraClass?' '+extraClass:''}" style="color:${color}">${esc(char)}</i>`;
+  const icon = CAT_ICON[catName] || ICON_DOTS;
+  return `<i class="seal${extraClass?' '+extraClass:''}" style="color:${color}"><svg viewBox="0 0 24 24">${icon}</svg></i>`;
 }
 
 const INCOME_RULES = {
@@ -699,12 +773,12 @@ const BRIDGE = typeof window.AndroidBridge !== 'undefined' ? window.AndroidBridg
 let memFallback = null;
 
 function loadDB(){
-  const blank = {tx:[], memory:{}, pref:{}, v:1};
+  const blank = {tx:[], memory:{}, pref:{}, reports:[], v:1};
   try{
     const raw = BRIDGE ? BRIDGE.load() : localStorage.getItem(KEY);
     if(!raw) return blank;
     const d = JSON.parse(raw);
-    return {tx:Array.isArray(d.tx)?d.tx:[], memory:d.memory||{}, pref:d.pref||{}, v:1};
+    return {tx:Array.isArray(d.tx)?d.tx:[], memory:d.memory||{}, pref:d.pref||{}, reports:Array.isArray(d.reports)?d.reports:[], v:1};
   }catch(e){
     if(memFallback) return memFallback;
     return blank;
@@ -733,25 +807,92 @@ window.reloadFromBridge = function(){
   render();
 };
 
-function getCompView(){ return (DB.pref && DB.pref.compView === 'ring') ? 'ring' : 'bar'; }
+function getCompView(){
+  const v = DB.pref && DB.pref.compView;
+  return (v==='ring'||v==='line') ? v : 'bar';
+}
 function setCompView(v){
   DB.pref = DB.pref || {};
   DB.pref.compView = v;
   saveDB();
+  applyCompView();
 }
 function applyCompView(){
-  const v = getCompView();
+  const supportsLine = (period==='week' || period==='month');
+  $('btn-view-line').hidden = !supportsLine;
+
+  let v = getCompView();
+  if(v==='line' && !supportsLine) v = 'bar'; // 本日/全部不支持趋势图，临时回退显示，不动已保存的偏好
+
   document.querySelectorAll('#view-toggle [data-view]').forEach(b=>{
     b.setAttribute('aria-selected', b.dataset.view===v ? 'true' : 'false');
   });
   $('comp-bar').hidden = v !== 'bar';
   $('comp-ring').hidden = v !== 'ring';
+  $('comp-line').hidden = v !== 'line';
+  $('comp-title').textContent = v==='line' ? '收支趋势' : '支出占比';
+  if(v==='line') renderTrend();
+}
+
+// 折线图：周视图看最近4周，月视图看最近3个月，跟着当前翻页的周期走
+function getTrendPeriods(){
+  if(period === 'week'){
+    const periods = [];
+    for(let i=3;i>=0;i--){
+      const s = startOfWeek(new Date()); s.setDate(s.getDate() + (offset-i)*7);
+      const e = new Date(s); e.setDate(e.getDate()+7);
+      periods.push({from:s, to:e, label:(s.getMonth()+1)+'/'+s.getDate()});
+    }
+    return periods;
+  }
+  if(period === 'month'){
+    const periods = [];
+    const now = new Date();
+    for(let i=2;i>=0;i--){
+      const s = new Date(now.getFullYear(), now.getMonth()+offset-i, 1);
+      const e = new Date(now.getFullYear(), now.getMonth()+offset-i+1, 1);
+      periods.push({from:s, to:e, label:(s.getMonth()+1)+'月'});
+    }
+    return periods;
+  }
+  return null;
+}
+function renderTrend(){
+  const periods = getTrendPeriods();
+  if(!periods) return;
+  const data = periods.map(p=>{
+    const agg = rangeAgg(p.from, p.to);
+    return {label:p.label, expense:agg.total, income:agg.incomeTotal};
+  });
+  const maxVal = Math.max(1, ...data.map(d=>Math.max(d.expense, d.income)));
+
+  const W=300, H=130, padL=8, padR=8, padT=14, padB=22;
+  const plotW = W-padL-padR, plotH = H-padT-padB;
+  const n = data.length;
+  const stepX = n>1 ? plotW/(n-1) : 0;
+  const xy = (i,val) => [padL+stepX*i, padT+plotH-(val/maxVal)*plotH];
+
+  const expensePts = data.map((d,i)=>xy(i,d.expense));
+  const incomePts = data.map((d,i)=>xy(i,d.income));
+  const toPath = pts => pts.map((p,i)=>(i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  const dots = (pts,color) => pts.map(([x,y])=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6" fill="${color}"/>`).join('');
+
+  const gridLine = `<line x1="${padL}" y1="${(padT+plotH).toFixed(1)}" x2="${(padL+plotW).toFixed(1)}" y2="${(padT+plotH).toFixed(1)}" stroke="var(--rule)" stroke-width="1"/>`;
+  const expensePath = `<path d="${toPath(expensePts)}" fill="none" stroke="var(--stamp)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const incomePath = `<path d="${toPath(incomePts)}" fill="none" stroke="var(--moss)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const labels = data.map((d,i)=>{
+    const [x] = xy(i,0);
+    return `<text x="${x.toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="9" fill="var(--ink-35)">${esc(d.label)}</text>`;
+  }).join('');
+
+  $('trend-svg').innerHTML = gridLine + expensePath + incomePath + dots(expensePts,'var(--stamp)') + dots(incomePts,'var(--moss)') + labels;
 }
 
 // 界面主题：每套只换 CSS 变量的取值，布局/字体/图标都不变
 const THEMES = [
   {id:'default', n:'存折', dot:'#AA3A2C'},
   {id:'pink',    n:'粉萌', dot:'#E8598A'},
+  {id:'mono',    n:'简白', dot:'#1A1A18'},
 ];
 function getTheme(){
   const t = DB.pref && DB.pref.theme;
@@ -769,6 +910,13 @@ function applyTheme(){
   document.querySelectorAll('#theme-row [data-theme]').forEach(b=>{
     b.setAttribute('aria-pressed', b.dataset.theme===t ? 'true' : 'false');
   });
+  // 换主题时，系统状态栏/导航栏（App 里）和浏览器地址栏（网页里）也跟着换色
+  const paperColor = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim();
+  if(paperColor){
+    if(BRIDGE && BRIDGE.setSystemBarColor) BRIDGE.setSystemBarColor(paperColor);
+    const metaTheme = document.querySelector('meta[name=theme-color]');
+    if(metaTheme) metaTheme.setAttribute('content', paperColor);
+  }
 }
 function renderThemeRow(){
   $('theme-row').innerHTML = THEMES.map(t=>
@@ -985,10 +1133,6 @@ function render(){
   list.forEach(t => agg[t.category] = (agg[t.category]||0) + t.amount);
   const rows = Object.entries(agg).sort((a,b)=>b[1]-a[1]);
 
-  // 小结（人话版周报/月报）
-  const reportTxt = buildReport(r, total, incomeTotal, rows);
-  $('report-section').style.display = reportTxt ? '' : 'none';
-  $('report-text').textContent = reportTxt;
 
   // 签名元素：占比刻度条
   if(total > 0){
@@ -1022,44 +1166,45 @@ function render(){
       <p>${DB.tx.length ? '这段时间没有记录' : '还没有任何记录'}</p>
       <small>${DB.tx.length ? '换个周期看看，或者往前翻' : '导入一份账单，或者手动记第一笔'}</small>
     </div>`;
-    return;
-  }
-  const groups = {};
-  listAll.forEach(t=>{
-    const k = t.time.slice(0,10);
-    (groups[k] = groups[k]||[]).push(t);
-  });
-  const today = localISO(new Date()).slice(0,10);
-  const yest = (()=>{const d=new Date(); d.setDate(d.getDate()-1); return localISO(d).slice(0,10)})();
+  } else {
+    const groups = {};
+    listAll.forEach(t=>{
+      const k = t.time.slice(0,10);
+      (groups[k] = groups[k]||[]).push(t);
+    });
+    const today = localISO(new Date()).slice(0,10);
+    const yest = (()=>{const d=new Date(); d.setDate(d.getDate()-1); return localISO(d).slice(0,10)})();
 
-  $('feed').innerHTML = Object.keys(groups).sort().reverse().map(k=>{
-    const items = groups[k];
-    const net = items.reduce((s,t)=> s + (t.type==='income' ? t.amount : -t.amount), 0);
-    const d = new Date(k+'T12:00');
-    const wd = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
-    const label = k===today ? '今天 · '+wd : k===yest ? '昨天 · '+wd
-      : (d.getMonth()+1)+'月'+d.getDate()+'日 · '+wd;
-    return `<div class="day-head"><span class="d">${label}</span><span class="s" style="color:${net>=0?'var(--moss)':'var(--ink-35)'}">${net>=0?'+':'−'}¥${money(Math.abs(net))}</span></div>` +
-      items.map(t=>{
-        const isIncome = t.type === 'income';
-        return `
-        <div class="tx">
-          ${seal(t.category)}
-          <div class="tx-main">
-            <div class="tx-merch">${esc(t.merchant)}</div>
-            <div class="tx-meta">
-              <span>${esc(t.category)}</span>
-              <span>${t.time.slice(11,16)}</span>
-              ${t.source!=='manual' ? `<span>${t.source==='import'?'账单':'自动'}</span>`:''}
+    $('feed').innerHTML = Object.keys(groups).sort().reverse().map(k=>{
+      const items = groups[k];
+      const net = items.reduce((s,t)=> s + (t.type==='income' ? t.amount : -t.amount), 0);
+      const d = new Date(k+'T12:00');
+      const wd = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
+      const label = k===today ? '今天 · '+wd : k===yest ? '昨天 · '+wd
+        : (d.getMonth()+1)+'月'+d.getDate()+'日 · '+wd;
+      return `<div class="day-head"><span class="d">${label}</span><span class="s" style="color:${net>=0?'var(--moss)':'var(--ink-35)'}">${net>=0?'+':'−'}¥${money(Math.abs(net))}</span></div>` +
+        items.map(t=>{
+          const isIncome = t.type === 'income';
+          return `
+          <div class="tx">
+            ${seal(t.category)}
+            <div class="tx-main">
+              <div class="tx-merch">${esc(t.merchant)}</div>
+              <div class="tx-meta">
+                <span>${esc(t.category)}</span>
+                <span>${t.time.slice(11,16)}</span>
+                ${t.source!=='manual' ? `<span>${t.source==='import'?'账单':'自动'}</span>`:''}
+              </div>
             </div>
-          </div>
-          <span class="tx-amt${isIncome?' income':''}">${isIncome?'+':'−'}${money(t.amount)}</span>
-          <button class="tx-del" data-del="${t.id}" aria-label="删除">×</button>
-        </div>`;
-      }).join('');
-  }).join('');
+            <span class="tx-amt${isIncome?' income':''}">${isIncome?'+':'−'}${money(t.amount)}</span>
+            <button class="tx-del" data-del="${t.id}" aria-label="删除">×</button>
+          </div>`;
+        }).join('');
+    }).join('');
+  }
 
   updateReviewBadge();
+  applyCompView();
 }
 
 // 圆环视图：跟横条用的是同一份 rows 数据，只是画法不同
@@ -1092,17 +1237,21 @@ function esc(s){
   return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
+// 给一段任意时间范围算支出/收入/分类汇总——实时小结和存档周报/月报共用
+function rangeAgg(from, to){
+  const list = DB.tx.filter(t => t.type !== 'income' && new Date(t.time) >= from && new Date(t.time) < to);
+  const incomeList = DB.tx.filter(t => t.type === 'income' && new Date(t.time) >= from && new Date(t.time) < to);
+  const total = list.reduce((s,t)=>s+t.amount, 0);
+  const incomeTotal = incomeList.reduce((s,t)=>s+t.amount, 0);
+  const agg = {};
+  list.forEach(t => agg[t.category] = (agg[t.category]||0) + t.amount);
+  const rows = Object.entries(agg).sort((a,b)=>b[1]-a[1]);
+  return {total, incomeTotal, rows};
+}
+
 // 人话小结：本期花了多少、大头是什么、跟上一期比怎么样
-function buildReport(r, total, incomeTotal, rows){
-  if(period === 'all') return '';
+function composeReportText(total, incomeTotal, rows, prevExpense){
   if(total <= 0 && incomeTotal <= 0) return '';
-
-  const spanMs = r.to - r.from;
-  const pf = new Date(r.from.getTime() - spanMs), pt = new Date(r.from);
-  const prevExpense = DB.tx
-    .filter(t => t.type !== 'income' && new Date(t.time) >= pf && new Date(t.time) < pt)
-    .reduce((s,t)=>s+t.amount, 0);
-
   const parts = [];
   parts.push(total>0
     ? `这段时间一共花了 ¥${money(total)}${incomeTotal>0?`，收入 ¥${money(incomeTotal)}`:''}`
@@ -1127,6 +1276,82 @@ function buildReport(r, total, incomeTotal, rows){
     parts.push(balance>=0 ? `结余 +¥${money(balance)}` : `倒贴了 ¥${money(Math.abs(balance))}`);
   }
   return parts.join('，') + '。';
+}
+
+/* ============================================================
+   7b. 周报 / 月报存档 —— 铃铛里看的那些
+   ============================================================ */
+function generateStoredReport(type, from, to, prevFrom, prevTo, periodLabel){
+  const {total, incomeTotal, rows} = rangeAgg(from, to);
+  const prevExpense = rangeAgg(prevFrom, prevTo).total;
+  const text = composeReportText(total, incomeTotal, rows, prevExpense);
+  if(!text) return null;
+  return {
+    id: uid(),
+    type,
+    periodLabel,
+    text,
+    read: false,
+    createdAt: localISO(new Date())
+  };
+}
+function checkAutoReports(){
+  DB.pref = DB.pref || {};
+  DB.reports = DB.reports || [];
+  let changed = false;
+
+  // 上一周有没有生成过
+  const thisWeekStart = startOfWeek(new Date());
+  const lastWeekStart = new Date(thisWeekStart); lastWeekStart.setDate(lastWeekStart.getDate()-7);
+  const lastWeekEnd = thisWeekStart;
+  const lastWeekKey = localISO(lastWeekStart).slice(0,10);
+  if(DB.pref.reportedWeekKey !== lastWeekKey){
+    const prevWeekStart = new Date(lastWeekStart); prevWeekStart.setDate(prevWeekStart.getDate()-7);
+    const eShow = new Date(lastWeekEnd); eShow.setDate(eShow.getDate()-1);
+    const sameMonth = lastWeekStart.getMonth()===eShow.getMonth();
+    const label = (lastWeekStart.getMonth()+1)+'月'+lastWeekStart.getDate()+'日 – ' + (sameMonth?'':(eShow.getMonth()+1)+'月') + eShow.getDate()+'日';
+    const rec = generateStoredReport('week', lastWeekStart, lastWeekEnd, prevWeekStart, lastWeekStart, label);
+    if(rec) DB.reports.push(rec);
+    DB.pref.reportedWeekKey = lastWeekKey;
+    changed = true;
+  }
+
+  // 上个月有没有生成过
+  const now = new Date();
+  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastMonthStart = new Date(now.getFullYear(), now.getMonth()-1, 1);
+  const lastMonthEnd = thisMonthStart;
+  const lastMonthKey = lastMonthStart.getFullYear()+'-'+pad2(lastMonthStart.getMonth()+1);
+  if(DB.pref.reportedMonthKey !== lastMonthKey){
+    const prevMonthStart = new Date(now.getFullYear(), now.getMonth()-2, 1);
+    const label = lastMonthStart.getFullYear()+'年'+(lastMonthStart.getMonth()+1)+'月';
+    const rec = generateStoredReport('month', lastMonthStart, lastMonthEnd, prevMonthStart, lastMonthStart, label);
+    if(rec) DB.reports.push(rec);
+    DB.pref.reportedMonthKey = lastMonthKey;
+    changed = true;
+  }
+
+  if(changed) saveDB();
+}
+function updateReportsBadge(){
+  const n = (DB.reports||[]).filter(r=>!r.read).length;
+  $('reports-dot').hidden = n===0;
+}
+function renderReports(){
+  const box = $('reports-body');
+  const reports = (DB.reports||[]).slice().sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+  if(!reports.length){
+    box.innerHTML = `<div class="empty"><p>还没有周报/月报</p><small>每周一、每月1号会自动生成上一期的小结</small></div>`;
+    return;
+  }
+  box.innerHTML = reports.map(r=>`
+    <div class="report-row">
+      <div class="report-head">
+        <span class="report-tag">${r.type==='week'?'周报':'月报'}</span>
+        <span class="report-period">${esc(r.periodLabel)}</span>
+      </div>
+      <p class="report-text">${esc(r.text)}</p>
+    </div>`).join('');
 }
 
 /* ============================================================
@@ -1558,13 +1783,22 @@ document.querySelectorAll('[data-period]').forEach(b=>{
 $('nav-prev').onclick = ()=>{ offset--; render(); };
 $('nav-next').onclick = ()=>{ if(offset<0){ offset++; render(); } };
 document.querySelectorAll('#view-toggle [data-view]').forEach(b=>{
-  b.onclick = ()=>{ setCompView(b.dataset.view); applyCompView(); };
+  b.onclick = ()=>{ setCompView(b.dataset.view); };
 });
 document.addEventListener('click', e=>{
   const d = e.target.closest('[data-del]');
   if(d) delTx(d.dataset.del);
 });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape' && openSheet) sheetClose(); });
+
+/* 小结铃铛 */
+$('btn-reports').onclick = ()=>{
+  (DB.reports||[]).forEach(r=> r.read = true);
+  saveDB();
+  updateReportsBadge();
+  renderReports();
+  sheetOpen('sheet-reports');
+};
 
 /* 设置 */
 $('btn-settings').onclick = ()=>{
@@ -1576,7 +1810,7 @@ $('btn-settings').onclick = ()=>{
       ? '通知监听权限 · 已开启<small>正在自动捕捉微信/支付宝付款通知</small>'
       : '通知监听权限 · 未开启<small>没开的话不会自动记账，点右边去系统设置里开</small>';
     $('notif-access-go').textContent = granted ? '重新检查' : '去开启';
-    $('storage-note').textContent = '数据存在手机本地数据库里，卸载 App 才会丢。';
+    $('storage-note').textContent = '数据只存在这台手机本地，不联网、不上传任何地方，卸载 App 才会丢。';
   } else {
     const base = location.origin + location.pathname;
     $('api-code').innerHTML =
@@ -1586,8 +1820,8 @@ $('btn-settings').onclick = ()=>{
       '或者直接丢原始通知文本，自动识别金额/商户/收支方向：<br>' +
       esc(base) + '?<b>text</b>=微信支付-向瑞幸咖啡付款18.50元';
     $('storage-note').textContent = storageOK
-      ? '持久化正常，关掉浏览器数据也在。'
-      : '当前环境不支持持久化保存，刷新会丢数据 —— 请把这个文件放到自己的浏览器或服务器上打开。';
+      ? '数据只存在这台设备的浏览器里，不上传任何地方。持久化正常，关掉浏览器数据也在。'
+      : '数据只存在这台设备的浏览器里，不上传任何地方。当前环境不支持持久化保存，刷新会丢数据 —— 请把这个文件放到自己的浏览器或服务器上打开。';
   }
   sheetOpen('sheet-settings');
 };
@@ -1623,8 +1857,9 @@ $('btn-copy-url').onclick = async ()=>{
 };
 $('btn-wipe').onclick = ()=>{
   if(!confirm('清空所有记录和分类记忆？这一步不能撤销。')) return;
-  DB = {tx:[], memory:{}, v:1};
+  DB = {tx:[], memory:{}, pref:{}, reports:[], v:1};
   saveDB(); render(); sheetClose();
+  updateReportsBadge();
   toast(null,'已清空');
 };
 
@@ -1632,7 +1867,8 @@ $('btn-wipe').onclick = ()=>{
    14. 启动
    ============================================================ */
 $('in-time').value = localISO(new Date());
-applyCompView();
+checkAutoReports();
+updateReportsBadge();
 renderThemeRow();
 render();
 handleURLIntake();
