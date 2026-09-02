@@ -112,7 +112,6 @@ input,select{font:inherit;color:inherit}
   font-weight:500;
 }
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
-#cat-label{letter-spacing:.03em;text-transform:none;font-size:11px}
 .hr{height:1px;background:var(--rule);border:0;margin:0}
 .hr-soft{height:1px;background:var(--rule-soft);border:0;margin:0}
 
@@ -185,7 +184,7 @@ main{padding:0 var(--pad)}
 /* ---------- 收支对比 ---------- */
 .io-bars{margin-top:20px;border-top:1px solid var(--rule);padding-top:14px}
 .io-bar-row{display:flex;align-items:center;gap:10px;padding:5px 0}
-.io-bar-row .io-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--ink-35);width:32px;flex-shrink:0}
+.io-bar-row .io-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--ink-35);width:auto;min-width:32px;flex-shrink:0;white-space:nowrap}
 .io-bar-row .io-bar{flex:1;height:9px;background:var(--paper-2);overflow:hidden}
 .io-bar-row .io-bar i{display:block;height:100%;transition:width .5s cubic-bezier(.2,.7,.2,1)}
 .io-bar-row .io-amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12.5px;min-width:74px;text-align:right}
@@ -197,6 +196,7 @@ main{padding:0 var(--pad)}
 .comp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .view-toggle{display:flex;border:1px solid var(--rule)}
 .view-toggle button{width:27px;height:23px;display:grid;place-items:center;color:var(--ink-35);transition:background .15s,color .15s}
+.view-toggle button[hidden]{display:none}
 .view-toggle button+button{border-left:1px solid var(--rule-soft)}
 .view-toggle button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
 .view-toggle svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round}
@@ -254,11 +254,24 @@ main{padding:0 var(--pad)}
 }
 .day-head .d{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-60);text-transform:uppercase}
 .day-head .s{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:11px;color:var(--ink-35)}
+.tx-swipe{
+  overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  border-top:1px solid var(--rule-soft);
+  animation:rise .3s cubic-bezier(.2,.7,.2,1) both;
+}
+.tx-swipe::-webkit-scrollbar{display:none}
+.tx-swipe-track{display:flex;width:100%}
+.tx-content{flex:0 0 100%;scroll-snap-align:start;background:var(--paper);padding-right:14px}
+.tx-actions{flex:0 0 104px;scroll-snap-align:start;display:flex}
+.tx-act{flex:1;display:flex;align-items:center;justify-content:center;color:var(--paper)}
+.tx-act.edit{background:var(--ink-60)}
+.tx-act.del{background:var(--stamp)}
+.tx-act svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tx{
   display:grid;grid-template-columns:21px 1fr auto;
   align-items:center;gap:11px;
-  padding:12px 0;border-top:1px solid var(--rule-soft);
-  animation:rise .3s cubic-bezier(.2,.7,.2,1) both;
+  padding:12px 0;
 }
 .tx-main{min-width:0}
 .tx-merch{font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -266,12 +279,6 @@ main{padding:0 var(--pad)}
 .tx-meta span{font-family:var(--mono);font-size:10px;color:var(--ink-35);letter-spacing:.04em}
 .tx-amt{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;letter-spacing:-.01em}
 .tx-amt.income{color:var(--moss)}
-.tx-del{
-  width:26px;height:26px;display:none;place-items:center;
-  font-family:var(--mono);font-size:14px;color:var(--ink-35);
-}
-.tx:hover .tx-del,.tx:focus-within .tx-del{display:grid}
-.tx:hover .tx-del:hover{color:var(--stamp)}
 @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 .empty{
@@ -354,6 +361,24 @@ main{padding:0 var(--pad)}
 }
 .field input:focus{outline:2px solid var(--ink);outline-offset:-2px}
 
+.merchant-row{display:flex;gap:8px}
+.merchant-row input[type=text]{width:auto;flex:1;min-width:0}
+.cat-pill{
+  flex-shrink:0;display:flex;align-items:center;gap:6px;
+  padding:0 10px;background:var(--card);
+  border:1px solid var(--rule);max-width:38%;
+}
+.cat-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.cat-pill.guessed{border-color:var(--stamp);border-style:dashed}
+.cat-pill-go{width:12px;height:12px;stroke:var(--ink-35);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.cat-field{position:relative}
+.cat-pop{
+  position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;
+  background:var(--paper);border:1px solid var(--rule);
+  padding:12px;box-shadow:0 10px 28px rgba(var(--ink-rgb),.18);
+  max-height:min(280px,60vh);overflow-y:auto;
+}
+
 .time-toggle{
   width:100%;display:flex;align-items:baseline;gap:10px;
   padding:9px 0;border-bottom:1px solid var(--rule-soft);text-align:left;
@@ -361,6 +386,7 @@ main{padding:0 var(--pad)}
 .time-toggle #time-preview{font-family:var(--mono);font-size:13px;color:var(--ink)}
 .time-toggle .tt-go{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ink-35)}
 .time-toggle:hover .tt-go{color:var(--ink)}
+.time-toggle[hidden]{display:none}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
 .chip{
   padding:8px 12px;border:1px solid var(--rule);background:var(--card);
@@ -415,12 +441,14 @@ main{padding:0 var(--pad)}
 }
 .log b{color:var(--ink);font-weight:500}
 .log .bad{color:var(--stamp)}
+#storage-note{display:block;font-size:9px;color:var(--ink-35);white-space:nowrap;overflow-x:auto}
 
 /* 设置 */
 .row-btn{
   width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:15px 0;border-bottom:1px solid var(--rule-soft);text-align:left;
 }
+.row-btn[hidden]{display:none}
 .row-btn small{display:block;color:var(--ink-35);font-size:11.5px;margin-top:2px;line-height:1.5}
 .row-btn .go{font-family:var(--mono);font-size:12px;color:var(--ink-35)}
 .row-btn:hover .go{color:var(--ink)}
@@ -477,20 +505,20 @@ main{padding:0 var(--pad)}
   <div class="topbar">
     <div class="wordmark"><b>Money Manager</b><span id="wm-count">0 笔</span><button class="review-badge" id="review-badge" hidden></button></div>
     <div class="topbar-actions">
-      <button class="icon-btn" id="btn-reports" aria-label="周报与月报小结">
+      <button class="icon-btn" id="btn-reports" aria-label="周报与月报小结" data-i18n-aria="reportsAria">
         <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <i class="dot" id="reports-dot" hidden></i>
       </button>
-      <button class="icon-btn" id="btn-settings" aria-label="设置与备份">
+      <button class="icon-btn" id="btn-settings" aria-label="设置与备份" data-i18n-aria="settingsAria">
         <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </button>
     </div>
   </div>
   <div class="periods" role="tablist">
-    <button role="tab" data-period="day" aria-selected="false">本日</button>
-    <button role="tab" data-period="week" aria-selected="true">本周</button>
-    <button role="tab" data-period="month" aria-selected="false">本月</button>
-    <button role="tab" data-period="all" aria-selected="false">全部</button>
+    <button role="tab" data-period="day" aria-selected="false" data-i18n="periodDay">本日</button>
+    <button role="tab" data-period="week" aria-selected="true" data-i18n="periodWeek">本周</button>
+    <button role="tab" data-period="month" aria-selected="false" data-i18n="periodMonth">本月</button>
+    <button role="tab" data-period="all" aria-selected="false" data-i18n="periodAll">全部</button>
   </div>
 </header>
 
@@ -499,8 +527,8 @@ main{padding:0 var(--pad)}
     <div class="hero-range">
       <span class="eyebrow" id="range-label">—</span>
       <div style="display:flex;gap:2px">
-        <button class="nav-arrow" id="nav-prev" aria-label="上一期">←</button>
-        <button class="nav-arrow" id="nav-next" aria-label="下一期">→</button>
+        <button class="nav-arrow" id="nav-prev" aria-label="上一期" data-i18n-aria="prevPeriod">←</button>
+        <button class="nav-arrow" id="nav-next" aria-label="下一期" data-i18n-aria="nextPeriod">→</button>
       </div>
     </div>
     <div class="total" id="total"><span class="yen">¥</span><span id="total-int">0</span><span class="cents" id="total-cents">.00</span></div>
@@ -509,13 +537,13 @@ main{padding:0 var(--pad)}
       <div class="comp-head">
         <span class="eyebrow" id="comp-title">支出占比</span>
         <div class="view-toggle" id="view-toggle" role="tablist">
-          <button data-view="bar" aria-selected="true" aria-label="横条视图">
+          <button data-view="bar" aria-selected="true" aria-label="横条视图" data-i18n-aria="viewBar">
             <svg viewBox="0 0 24 24"><path d="M6 20V12M12 20V6M18 20V14"/></svg>
           </button>
-          <button data-view="ring" aria-selected="false" aria-label="圆环视图">
+          <button data-view="ring" aria-selected="false" aria-label="圆环视图" data-i18n-aria="viewRing">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/></svg>
           </button>
-          <button data-view="line" aria-selected="false" aria-label="趋势视图" id="btn-view-line" hidden>
+          <button data-view="line" aria-selected="false" aria-label="趋势视图" data-i18n-aria="viewLine" id="btn-view-line" hidden>
             <svg viewBox="0 0 24 24"><path d="M4 16l5-6 4 4 7-9"/></svg>
           </button>
         </div>
@@ -535,8 +563,8 @@ main{padding:0 var(--pad)}
           <svg viewBox="0 0 300 130" id="trend-svg"></svg>
         </div>
         <div class="trend-legend">
-          <span><i style="background:var(--stamp)"></i>支出</span>
-          <span><i style="background:var(--moss)"></i>收入</span>
+          <span><i style="background:var(--stamp)"></i><span data-i18n="legendExpense">支出</span></span>
+          <span><i style="background:var(--moss)"></i><span data-i18n="legendIncome">收入</span></span>
         </div>
       </div>
     </div>
@@ -544,7 +572,7 @@ main{padding:0 var(--pad)}
 
   <section class="section" id="cats-section">
     <div class="section-head">
-      <span class="eyebrow">分类构成</span>
+      <span class="eyebrow" data-i18n="catsSectionTitle">分类构成</span>
       <span class="eyebrow" id="cats-count"></span>
     </div>
     <div class="cats" id="cats"></div>
@@ -552,14 +580,14 @@ main{padding:0 var(--pad)}
 
   <section class="section">
     <div class="section-head">
-      <span class="eyebrow">流水明细</span>
+      <span class="eyebrow" data-i18n="feedSectionTitle">流水明细</span>
     </div>
     <div id="feed"></div>
   </section>
 </main>
 
 <div class="dock">
-  <button class="primary" id="btn-add">记一笔</button>
+  <button class="primary" id="btn-add" data-i18n="addBtn">记一笔</button>
 </div>
 
 <div class="scrim" id="scrim"></div>
@@ -567,25 +595,27 @@ main{padding:0 var(--pad)}
 <!-- 录入 -->
 <div class="sheet" id="sheet-add" role="dialog" aria-label="记一笔">
   <div class="sheet-head">
-    <h2>记一笔</h2>
-    <button class="close" data-close>关闭</button>
+    <h2 id="sheet-add-title">记一笔</h2>
+    <button class="close" data-close data-i18n="closeBtn">关闭</button>
   </div>
   <div class="type-toggle" id="type-toggle" role="tablist">
-    <button role="tab" data-type="expense" aria-selected="true">支出</button>
-    <button role="tab" data-type="income" aria-selected="false">收入</button>
+    <button role="tab" data-type="expense" aria-selected="true" data-i18n="typeExpense">支出</button>
+    <button role="tab" data-type="income" aria-selected="false" data-i18n="typeIncome">收入</button>
   </div>
   <div class="amount-display zero" id="amt-display"><span class="yen">¥</span><span id="amt-text">0</span></div>
-  <div class="field">
-    <label class="eyebrow">花在哪</label>
-    <input type="text" id="in-merchant" placeholder="瑞幸 / 地铁 / 盒马…" autocomplete="off" enterkeyhint="done">
-  </div>
-  <div class="field">
-    <label class="eyebrow" id="cat-label">分类</label>
-    <div class="chips" id="cat-chips"></div>
+  <div class="field cat-field">
+    <label class="eyebrow" data-i18n="catFieldLabel">花在哪 · 分类</label>
+    <div class="merchant-row">
+      <button class="cat-pill" id="cat-pill" type="button"></button>
+      <input type="text" id="in-merchant" placeholder="瑞幸 / 地铁 / 盒马…" data-i18n-placeholder="merchantPlaceholder" autocomplete="off" enterkeyhint="done">
+    </div>
+    <div class="cat-pop" id="cat-pop" hidden>
+      <div class="chips" id="cat-chips"></div>
+    </div>
   </div>
   <div class="field">
     <button class="time-toggle" id="time-toggle">
-      <span class="eyebrow">时间</span><span id="time-preview">现在</span><span class="tt-go">改</span>
+      <span class="eyebrow" data-i18n="timeLabel">时间</span><span id="time-preview">现在</span><span class="tt-go" data-i18n="timeChange">改</span>
     </button>
     <input type="datetime-local" id="in-time" hidden>
   </div>
@@ -596,17 +626,17 @@ main{padding:0 var(--pad)}
 <!-- 导入 -->
 <div class="sheet" id="sheet-import" role="dialog" aria-label="导入账单">
   <div class="sheet-head">
-    <h2>导入账单</h2>
-    <button class="close" data-close>关闭</button>
+    <h2 data-i18n="importTitle">导入账单</h2>
+    <button class="close" data-close data-i18n="closeBtn">关闭</button>
   </div>
   <div class="drop" id="drop">
-    <p>把 CSV 拖进来，或选择文件</p>
+    <p data-i18n="dropText">把 CSV 拖进来，或选择文件</p>
     <small>
-      支付宝：我的 › 账单 › 右上角 › 开具交易流水证明 › 用于个人对账<br>
-      微信：我 › 服务 › 钱包 › 账单 › 常见问题 › 下载账单 › 用于个人对账<br>
-      账单会发到邮箱，解压后拿到 CSV
+      <span data-i18n="dropHintAlipay">支付宝：我的 › 账单 › 右上角 › 开具交易流水证明 › 用于个人对账</span><br>
+      <span data-i18n="dropHintWechat">微信：我 › 服务 › 钱包 › 账单 › 常见问题 › 下载账单 › 用于个人对账</span><br>
+      <span data-i18n="dropHintEmail">账单会发到邮箱，解压后拿到 CSV</span>
     </small>
-    <label class="file-btn" for="file-in">选择文件</label>
+    <label class="file-btn" for="file-in" data-i18n="chooseFileBtn">选择文件</label>
     <input type="file" id="file-in" accept=".csv,.txt" multiple hidden>
   </div>
   <div class="log" id="import-log" hidden></div>
@@ -616,8 +646,8 @@ main{padding:0 var(--pad)}
 <!-- 待确认分类 -->
 <div class="sheet" id="sheet-review" role="dialog" aria-label="待确认分类">
   <div class="sheet-head">
-    <h2>待确认分类</h2>
-    <button class="close" data-close>关闭</button>
+    <h2 data-i18n="reviewTitle">待确认分类</h2>
+    <button class="close" data-close data-i18n="closeBtn">关闭</button>
   </div>
   <div id="review-body"></div>
   <div style="height:calc(20px + var(--sab))"></div>
@@ -626,40 +656,44 @@ main{padding:0 var(--pad)}
 <!-- 周报 / 月报小结 -->
 <div class="sheet" id="sheet-reports" role="dialog" aria-label="周报与月报小结">
   <div class="sheet-head">
-    <h2>小结</h2>
-    <button class="close" data-close>关闭</button>
+    <h2 data-i18n="reportsTitle">小结</h2>
+    <button class="close" data-close data-i18n="closeBtn">关闭</button>
   </div>
   <div id="reports-body"></div>
   <div style="height:calc(20px + var(--sab))"></div>
 </div>
 
 <!-- 设置 -->
-<div class="sheet" id="sheet-settings" role="dialog" aria-label="设置与备份">
+<div class="sheet" id="sheet-settings" role="dialog" aria-label="设置与备份" data-i18n-aria="settingsAria">
   <div class="sheet-head">
-    <h2>设置与备份</h2>
-    <button class="close" data-close>关闭</button>
+    <h2 data-i18n="settingsTitle">设置与备份</h2>
+    <button class="close" data-close data-i18n="closeBtn">关闭</button>
   </div>
   <div class="row-block">
-    <span>个性化界面</span>
+    <span data-i18n="themeSectionTitle">个性化界面</span>
     <div class="theme-row" id="theme-row"></div>
   </div>
+  <div class="row-block">
+    <span data-i18n="langSectionTitle">语言</span>
+    <div class="theme-row" id="lang-row"></div>
+  </div>
   <button class="row-btn" id="btn-import">
-    <span>导入账单<small>支付宝 / 微信导出的 CSV 账单</small></span>
-    <span class="go">导入</span>
+    <span><span data-i18n="importRowTitle">导入账单</span><small data-i18n="importRowDesc">支付宝 / 微信导出的 CSV 账单</small></span>
+    <span class="go" data-i18n="importGo">导入</span>
   </button>
   <button class="row-btn" id="btn-export">
-    <span>导出全部数据<small>下载 JSON 备份，含记录和分类记忆</small></span>
-    <span class="go">导出</span>
+    <span><span data-i18n="exportRowTitle">导出全部数据</span><small data-i18n="exportRowDesc">下载 JSON 备份，含记录和分类记忆</small></span>
+    <span class="go" data-i18n="exportGo">导出</span>
   </button>
   <label class="row-btn" for="file-restore" style="cursor:pointer">
-    <span>恢复备份<small>选择之前导出的 JSON，合并进现有数据</small></span>
-    <span class="go">选择</span>
+    <span><span data-i18n="restoreRowTitle">恢复备份</span><small data-i18n="restoreRowDesc">选择之前导出的 JSON，合并进现有数据</small></span>
+    <span class="go" data-i18n="restoreGo">选择</span>
   </label>
   <input type="file" id="file-restore" accept=".json" hidden>
   <div id="url-api-group">
     <button class="row-btn" id="btn-copy-url">
-      <span>自动写入接口<small>给 iOS 快捷指令 / Android 通知监听调用</small></span>
-      <span class="go">复制</span>
+      <span><span data-i18n="apiRowTitle">自动写入接口</span><small data-i18n="apiRowDesc">给 iOS 快捷指令 / Android 通知监听调用</small></span>
+      <span class="go" data-i18n="apiGo">复制</span>
     </button>
     <div class="code" id="api-code"></div>
   </div>
@@ -668,8 +702,8 @@ main{padding:0 var(--pad)}
     <span class="go" id="notif-access-go">去开启</span>
   </button>
   <button class="row-btn" id="btn-wipe" style="border-bottom:none">
-    <span style="color:var(--stamp)">清空所有数据<small>不可恢复，请先导出备份</small></span>
-    <span class="go">清空</span>
+    <span style="color:var(--stamp)"><span data-i18n="wipeRowTitle">清空所有数据</span><small data-i18n="wipeRowDesc">不可恢复，请先导出备份</small></span>
+    <span class="go" data-i18n="wipeGo">清空</span>
   </button>
   <div class="log" style="border-top:1px solid var(--rule);margin-top:20px">
     <span id="storage-note"></span>
@@ -680,7 +714,7 @@ main{padding:0 var(--pad)}
 <div class="toast" id="toast">
   <span class="t-amt" id="toast-amt"></span>
   <span class="t-txt" id="toast-txt"></span>
-  <button class="t-undo" id="toast-undo">撤销</button>
+  <button class="t-undo" id="toast-undo" data-i18n="undoBtn">撤销</button>
 </div>
 
 <script>
@@ -707,25 +741,25 @@ const ICON_ENVELOPE = '<rect x="3" y="6" width="18" height="12" rx="1.5"/><path 
 const ICON_UNDO = '<path d="M8 8L4 12l4 4"/><path d="M4 12h11a5 5 0 010 10h-1"/>';
 
 const CATS = [
-  {k:'食',  n:'餐饮',  c:'var(--c1)',  icon:ICON_CUP},
-  {k:'行',  n:'交通',  c:'var(--c3)',  icon:ICON_CAR},
-  {k:'购',  n:'购物',  c:'var(--c4)',  icon:ICON_BAG},
-  {k:'日',  n:'日用',  c:'var(--c6)',  icon:ICON_BULB},
-  {k:'乐',  n:'娱乐',  c:'var(--c5)',  icon:ICON_PLAY},
-  {k:'住',  n:'居住',  c:'var(--c2)',  icon:ICON_HOUSE},
-  {k:'讯',  n:'通信',  c:'var(--c10)', icon:ICON_WIFI},
-  {k:'医',  n:'医疗',  c:'var(--c8)',  icon:ICON_CROSS},
-  {k:'学',  n:'学习',  c:'var(--c7)',  icon:ICON_BOOK},
-  {k:'转',  n:'转账',  c:'var(--c9)',  icon:ICON_SWAP},
-  {k:'他',  n:'其他',  c:'var(--c11)', icon:ICON_DOTS},
+  {k:'食',  n:'餐饮',  en:'Food',          c:'var(--c1)',  icon:ICON_CUP},
+  {k:'行',  n:'交通',  en:'Transport',     c:'var(--c3)',  icon:ICON_CAR},
+  {k:'购',  n:'购物',  en:'Shopping',      c:'var(--c4)',  icon:ICON_BAG},
+  {k:'日',  n:'日用',  en:'Daily',         c:'var(--c6)',  icon:ICON_BULB},
+  {k:'乐',  n:'娱乐',  en:'Entertainment', c:'var(--c5)',  icon:ICON_PLAY},
+  {k:'住',  n:'居住',  en:'Housing',       c:'var(--c2)',  icon:ICON_HOUSE},
+  {k:'讯',  n:'通信',  en:'Phone',         c:'var(--c10)', icon:ICON_WIFI},
+  {k:'医',  n:'医疗',  en:'Medical',       c:'var(--c8)',  icon:ICON_CROSS},
+  {k:'学',  n:'学习',  en:'Education',     c:'var(--c7)',  icon:ICON_BOOK},
+  {k:'转',  n:'转账',  en:'Transfer',      c:'var(--c9)',  icon:ICON_SWAP},
+  {k:'他',  n:'其他',  en:'Other',         c:'var(--c11)', icon:ICON_DOTS},
 ];
 const INCOME_CATS = [
-  {k:'薪', n:'工资',      c:'var(--i1)', icon:ICON_BRIEFCASE},
-  {k:'兼', n:'兼职',      c:'var(--i2)', icon:ICON_CLOCK},
-  {k:'财', n:'理财',      c:'var(--i3)', icon:ICON_TREND},
-  {k:'红', n:'红包',      c:'var(--i4)', icon:ICON_ENVELOPE},
-  {k:'退', n:'报销/退款', c:'var(--i5)', icon:ICON_UNDO},
-  {k:'他', n:'其他收入',  c:'var(--i6)', icon:ICON_DOTS},
+  {k:'薪', n:'工资',      en:'Salary',        c:'var(--i1)', icon:ICON_BRIEFCASE},
+  {k:'兼', n:'兼职',      en:'Side Gig',      c:'var(--i2)', icon:ICON_CLOCK},
+  {k:'财', n:'理财',      en:'Investment',    c:'var(--i3)', icon:ICON_TREND},
+  {k:'红', n:'红包',      en:'Gift',          c:'var(--i4)', icon:ICON_ENVELOPE},
+  {k:'退', n:'报销/退款', en:'Reimbursement', c:'var(--i5)', icon:ICON_UNDO},
+  {k:'他', n:'其他收入',  en:'Other Income',  c:'var(--i6)', icon:ICON_DOTS},
 ];
 const CAT_COLOR = {};
 CATS.forEach(c=>CAT_COLOR[c.n]=c.c);
@@ -733,6 +767,22 @@ INCOME_CATS.forEach(c=>CAT_COLOR[c.n]=c.c);
 const CAT_ICON = {};
 CATS.forEach(c=>CAT_ICON[c.n]=c.icon);
 INCOME_CATS.forEach(c=>CAT_ICON[c.n]=c.icon);
+const CAT_EN = {};
+CATS.forEach(c=>CAT_EN[c.n]=c.en);
+INCOME_CATS.forEach(c=>CAT_EN[c.n]=c.en);
+// 分类名只在显示时按语言转换，存储/匹配/记忆学习全部继续用中文名——
+// 这样切换语言不用动数据、也不用动安卓那边的通知分类逻辑
+function catLabel(catName){
+  return (getLang()==='en' && CAT_EN[catName]) ? CAT_EN[catName] : catName;
+}
+// "未填写"/"自动记录"/"未知商户"（商户留空时的占位符）同理：存储永远用中文占位值，只在显示时翻译
+function merchantLabel(m){
+  if(getLang()!=='en') return m;
+  if(m==='未填写') return t('notFilled');
+  if(m==='自动记录') return t('autoRecordMerchant');
+  if(m==='未知商户') return t('unknownMerchant');
+  return m;
+}
 function seal(catName, extraClass){
   const color = CAT_COLOR[catName] || 'var(--c11)';
   const icon = CAT_ICON[catName] || ICON_DOTS;
@@ -830,7 +880,7 @@ function applyCompView(){
   $('comp-bar').hidden = v !== 'bar';
   $('comp-ring').hidden = v !== 'ring';
   $('comp-line').hidden = v !== 'line';
-  $('comp-title').textContent = v==='line' ? '收支趋势' : '支出占比';
+  $('comp-title').textContent = v==='line' ? t('compTitleTrend') : t('compTitle');
   if(v==='line') renderTrend();
 }
 
@@ -851,7 +901,7 @@ function getTrendPeriods(){
     for(let i=2;i>=0;i--){
       const s = new Date(now.getFullYear(), now.getMonth()+offset-i, 1);
       const e = new Date(now.getFullYear(), now.getMonth()+offset-i+1, 1);
-      periods.push({from:s, to:e, label:(s.getMonth()+1)+'月'});
+      periods.push({from:s, to:e, label: getLang()==='en' ? MONTHS_EN[s.getMonth()] : (s.getMonth()+1)+'月'});
     }
     return periods;
   }
@@ -890,9 +940,9 @@ function renderTrend(){
 
 // 界面主题：每套只换 CSS 变量的取值，布局/字体/图标都不变
 const THEMES = [
-  {id:'default', n:'存折', dot:'#AA3A2C'},
-  {id:'pink',    n:'粉萌', dot:'#E8598A'},
-  {id:'mono',    n:'简白', dot:'#1A1A18'},
+  {id:'default', n:'存折', en:'Ledger', dot:'#AA3A2C'},
+  {id:'pink',    n:'粉萌', en:'Pink',   dot:'#E8598A'},
+  {id:'mono',    n:'简白', en:'Mono',   dot:'#1A1A18'},
 ];
 function getTheme(){
   const t = DB.pref && DB.pref.theme;
@@ -921,11 +971,188 @@ function applyTheme(){
 function renderThemeRow(){
   $('theme-row').innerHTML = THEMES.map(t=>
     `<button class="theme-chip" data-theme="${t.id}" aria-pressed="false">
-      <i class="theme-dot" style="background:${t.dot}"></i>${t.n}</button>`).join('');
+      <i class="theme-dot" style="background:${t.dot}"></i>${getLang()==='en'?t.en:t.n}</button>`).join('');
   $('theme-row').querySelectorAll('[data-theme]').forEach(b=>{
     b.onclick = ()=> setTheme(b.dataset.theme);
   });
   applyTheme();
+}
+
+/* ============================================================
+   2b. 语言 / Language
+   ============================================================ */
+const LANGS = [
+  {id:'zh', n:'简体中文'},
+  {id:'en', n:'English'},
+];
+function getLang(){
+  const l = DB.pref && DB.pref.lang;
+  return LANGS.some(x=>x.id===l) ? l : 'zh';
+}
+function setLang(l){
+  DB.pref = DB.pref || {};
+  DB.pref.lang = l;
+  saveDB();
+  applyLang();
+}
+const I18N = {
+  zh: {
+    reportsAria:'周报与月报小结', settingsAria:'设置与备份',
+    periodDay:'本日', periodWeek:'本周', periodMonth:'本月', periodAll:'全部',
+    prevPeriod:'上一期', nextPeriod:'下一期',
+    compTitle:'支出占比', viewBar:'横条视图', viewRing:'圆环视图', viewLine:'趋势视图',
+    legendExpense:'支出', legendIncome:'收入',
+    catsSectionTitle:'分类构成', feedSectionTitle:'流水明细', addBtn:'记一笔',
+    addTitle:'记一笔', editTitle:'编辑这一笔', closeBtn:'关闭',
+    typeExpense:'支出', typeIncome:'收入',
+    catFieldLabel:'花在哪 · 分类', merchantPlaceholder:'瑞幸 / 地铁 / 盒马…',
+    timeLabel:'时间', timeNow:'现在', timeChange:'改',
+    saveBtnNew:'记下', saveBtnEdit:'保存', catPillDefault:'分类',
+    importTitle:'导入账单', dropText:'把 CSV 拖进来，或选择文件',
+    dropHintAlipay:'支付宝：我的 › 账单 › 右上角 › 开具交易流水证明 › 用于个人对账',
+    dropHintWechat:'微信：我 › 服务 › 钱包 › 账单 › 常见问题 › 下载账单 › 用于个人对账',
+    dropHintEmail:'账单会发到邮箱，解压后拿到 CSV', chooseFileBtn:'选择文件',
+    reviewTitle:'待确认分类', reviewDone:'都确认完了',
+    reviewDoneHint:'以后遇到同样的商户会自动记对分类',
+    reviewWhich:'这一笔该归到哪一类？', reviewSkip:'先跳过', reviewNext:'下一笔',
+    reportsTitle:'小结', reportsEmpty:'还没有周报/月报',
+    reportsEmptyHint:'每周一、每月1号会自动生成上一期的小结',
+    reportWeek:'周报', reportMonth:'月报',
+    settingsTitle:'设置与备份', themeSectionTitle:'个性化界面', langSectionTitle:'语言',
+    importRowTitle:'导入账单', importRowDesc:'支付宝 / 微信导出的 CSV 账单', importGo:'导入',
+    exportRowTitle:'导出全部数据', exportRowDesc:'下载 JSON 备份，含记录和分类记忆', exportGo:'导出',
+    restoreRowTitle:'恢复备份', restoreRowDesc:'选择之前导出的 JSON，合并进现有数据', restoreGo:'选择',
+    apiRowTitle:'自动写入接口', apiRowDesc:'给 iOS 快捷指令 / Android 通知监听调用', apiGo:'复制',
+    notifAccessOnLabel:'通知监听权限 · 已开启', notifAccessOnDesc:'正在自动捕捉微信/支付宝付款通知',
+    notifAccessOffLabel:'通知监听权限 · 未开启', notifAccessOffDesc:'没开的话不会自动记账，点右边去系统设置里开',
+    notifAccessRecheck:'重新检查', notifAccessGo:'去开启',
+    wipeRowTitle:'清空所有数据', wipeRowDesc:'不可恢复，请先导出备份', wipeGo:'清空',
+    storageNoteBridge:'数据只存在这台手机本地，不联网、不上传任何地方，卸载 App 才会丢。',
+    storageNoteWebOK:'数据只存在这台设备的浏览器里，不上传任何地方。持久化正常，关掉浏览器数据也在。',
+    storageNoteWebBad:'数据只存在这台设备的浏览器里，不上传任何地方。当前环境不支持持久化保存，刷新会丢数据 —— 请把这个文件放到自己的浏览器或服务器上打开。',
+    apiCodeIncomeHint:'记收入加 <b>&type=income</b>：',
+    apiCodeTextHint:'或者直接丢原始通知文本，自动识别金额/商户/收支方向：',
+    undoBtn:'撤销',
+    toastSavedEdit:'已保存修改', toastSaveFailDup:'保存失败，这一笔和另一笔重复了',
+    toastIncomeAdded:'已记入收入', toastExpenseAdded:'已记下', toastDup:'这一笔已经记过了',
+    toastNoAmount:'没能识别出金额，请手动记',
+    toastAutoIncome:'自动记入收入', toastAutoExpense:'自动记入',
+    toastMerged:n=>`合并了 ${n} 笔记录`, toastRestoreFail:'备份文件读不出来',
+    toastUrlCopied:'接口地址已复制', toastCopyFail:'复制失败，请手动选中下面那行',
+    toastWiped:'已清空', confirmWipe:'清空所有记录和分类记忆？这一步不能撤销。',
+    txCount:n=>`${n} 笔`, allRecords:'全部记录', balanceLabel:'结余',
+    noDataYet:'还没有数据', topSingle:'最大单笔', catsCount:n=>`${n} 类`,
+    emptyPeriodTitle:'这段时间没有记录', emptyAllTitle:'还没有任何记录',
+    emptyPeriodHint:'换个周期看看，或者往前翻', emptyAllHint:'导入一份账单，或者手动记第一笔',
+    today:'今天', yesterday:'昨天', sourceImport:'账单', sourceAuto:'自动',
+    editAria:'编辑', deleteAria:'删除', reviewBadge:n=>`${n} 待分类`,
+    weekdays:['周日','周一','周二','周三','周四','周五','周六'],
+    importReading:'正在读取…',
+    importNoHeader:'找不到表头，可能不是支付宝或微信的账单 CSV',
+    importMissingCols:'账单缺少时间或金额列',
+    importReadFail:msg=>`读取失败：${msg}`,
+    importSummary:(a,d,s)=>`新增 ${a} 笔（含支出与收入）· 重复跳过 ${d} · 无法识别跳过 ${s}`,
+    importNoPersist:'注意：这个环境不能持久保存，刷新会丢。请在自己的浏览器里打开。',
+    reviewNowBtn:n=>`现在确认 ${n} 笔分类`,
+    notFilled:'未填写', autoRecordMerchant:'自动记录', unknownMerchant:'未知商户',
+  },
+  en: {
+    reportsAria:'Weekly & monthly summaries', settingsAria:'Settings & backup',
+    periodDay:'Day', periodWeek:'Week', periodMonth:'Month', periodAll:'All',
+    prevPeriod:'Previous', nextPeriod:'Next',
+    compTitle:'Expense breakdown', viewBar:'Bar view', viewRing:'Ring view', viewLine:'Trend view',
+    legendExpense:'Expense', legendIncome:'Income',
+    catsSectionTitle:'By Category', feedSectionTitle:'Transactions', addBtn:'Add Entry',
+    addTitle:'Add Entry', editTitle:'Edit Entry', closeBtn:'Close',
+    typeExpense:'Expense', typeIncome:'Income',
+    catFieldLabel:'Spent On · Category', merchantPlaceholder:'Starbucks / Metro / Costco…',
+    timeLabel:'Time', timeNow:'Now', timeChange:'Edit',
+    saveBtnNew:'Add', saveBtnEdit:'Save', catPillDefault:'Category',
+    importTitle:'Import Bill', dropText:'Drop a CSV here, or choose a file',
+    dropHintAlipay:'Alipay: Me › Bills › ⋯ (top right) › Download transaction statement › For personal use',
+    dropHintWechat:'WeChat: Me › Services › Wallet › Bills › FAQ › Download bill › For personal use',
+    dropHintEmail:'The bill is emailed to you — unzip it to get the CSV', chooseFileBtn:'Choose File',
+    reviewTitle:'Review Categories', reviewDone:'All done',
+    reviewDoneHint:'The same merchant will be auto-categorized next time',
+    reviewWhich:'Which category does this belong to?', reviewSkip:'Skip', reviewNext:'Next',
+    reportsTitle:'Summaries', reportsEmpty:'No summaries yet',
+    reportsEmptyHint:'A summary is generated automatically every Monday and on the 1st of each month',
+    reportWeek:'Weekly', reportMonth:'Monthly',
+    settingsTitle:'Settings & Backup', themeSectionTitle:'Appearance', langSectionTitle:'Language',
+    importRowTitle:'Import Bill', importRowDesc:'CSV exported from Alipay / WeChat', importGo:'Import',
+    exportRowTitle:'Export All Data', exportRowDesc:'Download a JSON backup, incl. records and learned categories', exportGo:'Export',
+    restoreRowTitle:'Restore Backup', restoreRowDesc:'Choose a previously exported JSON to merge in', restoreGo:'Choose',
+    apiRowTitle:'Auto-Capture API', apiRowDesc:'For iOS Shortcuts / Android notification listeners', apiGo:'Copy',
+    notifAccessOnLabel:'Notification Access · On', notifAccessOnDesc:'Auto-capturing WeChat/Alipay payment notifications',
+    notifAccessOffLabel:'Notification Access · Off', notifAccessOffDesc:"Auto-capture won't work until this is on — tap to open system settings",
+    notifAccessRecheck:'Recheck', notifAccessGo:'Turn On',
+    wipeRowTitle:'Erase All Data', wipeRowDesc:'Cannot be undone — export a backup first', wipeGo:'Erase',
+    storageNoteBridge:"Data is stored only on this phone — never uploaded anywhere. It's lost only if you uninstall the app.",
+    storageNoteWebOK:'Data is stored only in this browser — never uploaded anywhere. Storage is working normally and survives closing the browser.',
+    storageNoteWebBad:"Data stays only in this browser — never uploaded anywhere. This environment doesn't support persistent storage, so refreshing will lose data — open this file in your own browser or host it yourself.",
+    apiCodeIncomeHint:'Add <b>&type=income</b> to log income:',
+    apiCodeTextHint:'Or just pass the raw notification text — amount/merchant/direction are auto-detected:',
+    undoBtn:'Undo',
+    toastSavedEdit:'Changes saved', toastSaveFailDup:"Couldn't save — duplicates another entry",
+    toastIncomeAdded:'Income recorded', toastExpenseAdded:'Recorded', toastDup:'Already recorded',
+    toastNoAmount:"Couldn't detect an amount — please add it manually",
+    toastAutoIncome:'Auto-recorded as income', toastAutoExpense:'Auto-recorded',
+    toastMerged:n=>`Merged ${n} record${n===1?'':'s'}`, toastRestoreFail:"Couldn't read the backup file",
+    toastUrlCopied:'API URL copied', toastCopyFail:'Copy failed — select the line below manually',
+    toastWiped:'Erased', confirmWipe:'Erase all records and learned categories? This cannot be undone.',
+    txCount:n=>`${n} tx`, allRecords:'All records', balanceLabel:'Balance',
+    noDataYet:'No data yet', topSingle:'Largest', catsCount:n=>`${n} categor${n===1?'y':'ies'}`,
+    emptyPeriodTitle:'No records in this period', emptyAllTitle:'No records yet',
+    emptyPeriodHint:'Try a different period, or go back', emptyAllHint:'Import a bill, or add your first entry manually',
+    today:'Today', yesterday:'Yesterday', sourceImport:'Imported', sourceAuto:'Auto',
+    editAria:'Edit', deleteAria:'Delete', reviewBadge:n=>`${n} pending`,
+    weekdays:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    importReading:'Reading…',
+    importNoHeader:"Can't find a header row — this may not be an Alipay/WeChat bill CSV",
+    importMissingCols:'Missing a time or amount column',
+    importReadFail:msg=>`Failed to read: ${msg}`,
+    importSummary:(a,d,s)=>`${a} added (expense & income) · ${d} duplicate skipped · ${s} unrecognized skipped`,
+    importNoPersist:"Note: this environment can't persist data — a refresh will lose it. Open this in your own browser.",
+    reviewNowBtn:n=>`Review ${n} now`,
+    notFilled:'Not filled in', autoRecordMerchant:'Auto-recorded', unknownMerchant:'Unknown merchant',
+  },
+};
+function t(key, ...args){
+  const dict = I18N[getLang()] || I18N.zh;
+  const v = (key in dict) ? dict[key] : I18N.zh[key];
+  return typeof v === 'function' ? v(...args) : v;
+}
+const MONTHS_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function monthDayLabel(d){
+  return getLang()==='en' ? MONTHS_EN[d.getMonth()]+' '+d.getDate() : (d.getMonth()+1)+'月'+d.getDate()+'日';
+}
+function applyLang(){
+  const l = getLang();
+  document.documentElement.setAttribute('lang', l==='en' ? 'en' : 'zh-CN');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPlaceholder); });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el=>{ el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
+  document.querySelectorAll('#lang-row [data-lang]').forEach(b=>{
+    b.setAttribute('aria-pressed', b.dataset.lang===l ? 'true' : 'false');
+  });
+  renderThemeRow();
+  if(editingId){
+    $('sheet-add-title').textContent = t('editTitle');
+    $('btn-save').textContent = t('saveBtnEdit');
+  } else {
+    $('sheet-add-title').textContent = t('addTitle');
+    $('btn-save').textContent = t('saveBtnNew');
+  }
+  updateCatPill();
+  if(openSheet === 'sheet-settings') refreshSettingsPanel();
+  render();
+}
+function renderLangRow(){
+  $('lang-row').innerHTML = LANGS.map(l=>
+    `<button class="theme-chip" data-lang="${l.id}" aria-pressed="false">${l.n}</button>`).join('');
+  $('lang-row').querySelectorAll('[data-lang]').forEach(b=>{
+    b.onclick = ()=> setLang(b.dataset.lang);
+  });
 }
 
 /* ============================================================
@@ -1059,6 +1286,18 @@ function delTx(id){
   DB.tx.splice(i,1);
   saveDB(); render();
 }
+function updateTx(id, patch){
+  const rec = DB.tx.find(x=>x.id===id);
+  if(!rec) return null;
+  Object.assign(rec, patch);
+  rec.amount = Math.abs(Number(rec.amount)||0);
+  rec.merchant = (rec.merchant||'未填写').trim().slice(0,60);
+  if(rec.amount <= 0) return null;
+  rec.fp = fingerprint(rec);
+  if(DB.tx.some(x => x.id !== id && x.fp === rec.fp)) return null;  // 去重（排除自己）
+  saveDB(); render();
+  return rec;
+}
 
 /* ============================================================
    6. 周期与汇总
@@ -1069,13 +1308,13 @@ let offset = 0;   // 0 = 本期，-1 = 上一期
 function getRange(){
   const now = new Date();
   if(period === 'all'){
-    return {from:new Date(0), to:new Date(3e12), label:'全部记录', days:null};
+    return {from:new Date(0), to:new Date(3e12), label:t('allRecords'), days:null};
   }
   if(period === 'day'){
     const s = new Date(now); s.setHours(0,0,0,0); s.setDate(s.getDate() + offset);
     const e = new Date(s); e.setDate(e.getDate()+1);
-    const wd = ['周日','周一','周二','周三','周四','周五','周六'][s.getDay()];
-    const label = (s.getMonth()+1)+'月'+s.getDate()+'日 · '+wd;
+    const wd = t('weekdays')[s.getDay()];
+    const label = monthDayLabel(s)+' · '+wd;
     return {from:s, to:e, label, days:1};
   }
   if(period === 'week'){
@@ -1083,13 +1322,16 @@ function getRange(){
     const e = new Date(s); e.setDate(e.getDate()+7);
     const eShow = new Date(e); eShow.setDate(eShow.getDate()-1);
     const sameMonth = s.getMonth()===eShow.getMonth();
-    const label = (s.getMonth()+1)+'月'+s.getDate()+'日 – ' + (sameMonth?'':(eShow.getMonth()+1)+'月') + eShow.getDate()+'日';
+    const label = getLang()==='en'
+      ? monthDayLabel(s) + ' – ' + (sameMonth ? eShow.getDate() : monthDayLabel(eShow))
+      : (s.getMonth()+1)+'月'+s.getDate()+'日 – ' + (sameMonth?'':(eShow.getMonth()+1)+'月') + eShow.getDate()+'日';
     return {from:s, to:e, label, days:7};
   }
   const s = new Date(now.getFullYear(), now.getMonth()+offset, 1);
   const e = new Date(now.getFullYear(), now.getMonth()+offset+1, 1);
   const days = Math.round((e-s)/864e5);
-  return {from:s, to:e, label:s.getFullYear()+'年'+(s.getMonth()+1)+'月', days};
+  const label = getLang()==='en' ? MONTHS_EN[s.getMonth()]+' '+s.getFullYear() : s.getFullYear()+'年'+(s.getMonth()+1)+'月';
+  return {from:s, to:e, label, days};
 }
 function inRange(t, r){
   const d = new Date(t.time);
@@ -1110,7 +1352,7 @@ function render(){
   const incomeTotal = incomeList.reduce((s,t)=>s+t.amount, 0);
   const balance = incomeTotal - total;
 
-  $('wm-count').textContent = DB.tx.length + ' 笔';
+  $('wm-count').textContent = t('txCount', DB.tx.length);
   $('range-label').textContent = r.label;
   $('nav-next').disabled = (offset >= 0) || period==='all';
   $('nav-prev').disabled = (period==='all');
@@ -1123,9 +1365,9 @@ function render(){
   // 收支对比
   const maxIO = Math.max(total, incomeTotal, 1);
   $('io-bars').innerHTML = `
-    <div class="io-bar-row"><span class="io-label">支出</span><div class="io-bar"><i style="width:${(total/maxIO*100).toFixed(2)}%;background:var(--stamp)"></i></div><span class="io-amt num">¥${money(total)}</span></div>
-    <div class="io-bar-row"><span class="io-label">收入</span><div class="io-bar"><i style="width:${(incomeTotal/maxIO*100).toFixed(2)}%;background:var(--moss)"></i></div><span class="io-amt num">¥${money(incomeTotal)}</span></div>
-    <div class="io-bar-row balance"><span class="io-label">结余</span><span class="io-amt num" style="color:${balance>=0?'var(--moss)':'var(--stamp)'}">${balance>=0?'+':'−'}¥${money(Math.abs(balance))}</span></div>
+    <div class="io-bar-row"><span class="io-label">${t('legendExpense')}</span><div class="io-bar"><i style="width:${(total/maxIO*100).toFixed(2)}%;background:var(--stamp)"></i></div><span class="io-amt num">¥${money(total)}</span></div>
+    <div class="io-bar-row"><span class="io-label">${t('legendIncome')}</span><div class="io-bar"><i style="width:${(incomeTotal/maxIO*100).toFixed(2)}%;background:var(--moss)"></i></div><span class="io-amt num">¥${money(incomeTotal)}</span></div>
+    <div class="io-bar-row balance"><span class="io-label">${t('balanceLabel')}</span><span class="io-amt num" style="color:${balance>=0?'var(--moss)':'var(--stamp)'}">${balance>=0?'+':'−'}¥${money(Math.abs(balance))}</span></div>
   `;
 
   // 分类汇总
@@ -1137,24 +1379,24 @@ function render(){
   // 签名元素：占比刻度条
   if(total > 0){
     $('bar').innerHTML = rows.map(([c,v]) =>
-      `<i style="width:${(v/total*100).toFixed(3)}%;background:${CAT_COLOR[c]||'var(--c11)'}" title="${c} ¥${money(v)}"></i>`).join('');
+      `<i style="width:${(v/total*100).toFixed(3)}%;background:${CAT_COLOR[c]||'var(--c11)'}" title="${catLabel(c)} ¥${money(v)}"></i>`).join('');
     const top = rows[0], second = rows[1];
     $('bar-ticks').innerHTML =
-      `<span>${esc(top[0])} ${(top[1]/total*100).toFixed(0)}%</span>` +
-      `<span>${second ? esc(second[0])+' '+(second[1]/total*100).toFixed(0)+'%' : ''}</span>` +
-      `<span>最大单笔 ¥${money(Math.max(...list.map(t=>t.amount)))}</span>`;
+      `<span>${esc(catLabel(top[0]))} ${(top[1]/total*100).toFixed(0)}%</span>` +
+      `<span>${second ? esc(catLabel(second[0]))+' '+(second[1]/total*100).toFixed(0)+'%' : ''}</span>` +
+      `<span>${t('topSingle')} ¥${money(Math.max(...list.map(t=>t.amount)))}</span>`;
   } else {
     $('bar').innerHTML = '';
-    $('bar-ticks').innerHTML = '<span>还没有数据</span><span>—</span><span></span>';
+    $('bar-ticks').innerHTML = `<span>${t('noDataYet')}</span><span>—</span><span></span>`;
   }
   renderRing(rows, total);
 
   // 分类排行
-  $('cats-count').textContent = rows.length ? rows.length+' 类' : '';
+  $('cats-count').textContent = rows.length ? t('catsCount', rows.length) : '';
   $('cats').innerHTML = rows.length ? rows.map(([c,v]) => `
     <div class="cat-row">
       ${seal(c)}
-      <span class="cat-name">${esc(c)}</span>
+      <span class="cat-name">${esc(catLabel(c))}</span>
       <span class="cat-pct num">${(v/total*100).toFixed(0)}%</span>
       <span class="cat-amt">${money(v)}</span>
     </div>`).join('') : '';
@@ -1163,8 +1405,8 @@ function render(){
   // 流水，按日分组
   if(!listAll.length){
     $('feed').innerHTML = `<div class="empty">
-      <p>${DB.tx.length ? '这段时间没有记录' : '还没有任何记录'}</p>
-      <small>${DB.tx.length ? '换个周期看看，或者往前翻' : '导入一份账单，或者手动记第一笔'}</small>
+      <p>${DB.tx.length ? t('emptyPeriodTitle') : t('emptyAllTitle')}</p>
+      <small>${DB.tx.length ? t('emptyPeriodHint') : t('emptyAllHint')}</small>
     </div>`;
   } else {
     const groups = {};
@@ -1179,32 +1421,63 @@ function render(){
       const items = groups[k];
       const net = items.reduce((s,t)=> s + (t.type==='income' ? t.amount : -t.amount), 0);
       const d = new Date(k+'T12:00');
-      const wd = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
-      const label = k===today ? '今天 · '+wd : k===yest ? '昨天 · '+wd
-        : (d.getMonth()+1)+'月'+d.getDate()+'日 · '+wd;
+      const wd = t('weekdays')[d.getDay()];
+      const label = k===today ? t('today')+' · '+wd : k===yest ? t('yesterday')+' · '+wd
+        : monthDayLabel(d)+' · '+wd;
       return `<div class="day-head"><span class="d">${label}</span><span class="s" style="color:${net>=0?'var(--moss)':'var(--ink-35)'}">${net>=0?'+':'−'}¥${money(Math.abs(net))}</span></div>` +
-        items.map(t=>{
-          const isIncome = t.type === 'income';
+        items.map(tx=>{
+          const isIncome = tx.type === 'income';
           return `
-          <div class="tx">
-            ${seal(t.category)}
-            <div class="tx-main">
-              <div class="tx-merch">${esc(t.merchant)}</div>
-              <div class="tx-meta">
-                <span>${esc(t.category)}</span>
-                <span>${t.time.slice(11,16)}</span>
-                ${t.source!=='manual' ? `<span>${t.source==='import'?'账单':'自动'}</span>`:''}
+          <div class="tx-swipe"><div class="tx-swipe-track">
+            <div class="tx-content"><div class="tx">
+              ${seal(tx.category)}
+              <div class="tx-main">
+                <div class="tx-merch">${esc(merchantLabel(tx.merchant))}</div>
+                <div class="tx-meta">
+                  <span>${esc(catLabel(tx.category))}</span>
+                  <span>${tx.time.slice(11,16)}</span>
+                  ${tx.source!=='manual' ? `<span>${tx.source==='import'?t('sourceImport'):t('sourceAuto')}</span>`:''}
+                </div>
               </div>
+              <span class="tx-amt${isIncome?' income':''}">${isIncome?'+':'−'}${money(tx.amount)}</span>
+            </div></div>
+            <div class="tx-actions">
+              <button class="tx-act edit" data-edit="${tx.id}" aria-label="编辑" data-i18n-aria="editAria">
+                <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </button>
+              <button class="tx-act del" data-del="${tx.id}" aria-label="删除" data-i18n-aria="deleteAria">
+                <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
             </div>
-            <span class="tx-amt${isIncome?' income':''}">${isIncome?'+':'−'}${money(t.amount)}</span>
-            <button class="tx-del" data-del="${t.id}" aria-label="删除">×</button>
-          </div>`;
+          </div></div>`;
         }).join('');
     }).join('');
+    attachSwipeHandlers();
   }
 
   updateReviewBadge();
   applyCompView();
+}
+let lastOpenSwipe = null;
+const autoClosingSwipes = new WeakSet();
+function attachSwipeHandlers(){
+  document.querySelectorAll('.tx-swipe').forEach(el=>{
+    el.addEventListener('scroll', ()=>{
+      if(autoClosingSwipes.has(el)){
+        if(el.scrollLeft <= 20) autoClosingSwipes.delete(el);
+        return;
+      }
+      if(el.scrollLeft > 20){
+        if(lastOpenSwipe && lastOpenSwipe!==el){
+          autoClosingSwipes.add(lastOpenSwipe);
+          lastOpenSwipe.scrollTo({left:0, behavior:'smooth'});
+        }
+        lastOpenSwipe = el;
+      } else if(lastOpenSwipe===el){
+        lastOpenSwipe = null;
+      }
+    }, {passive:true});
+  });
 }
 
 // 圆环视图：跟横条用的是同一份 rows 数据，只是画法不同
@@ -1219,7 +1492,7 @@ function renderRing(rows, total){
       const dash = v/total*circ;
       const html = `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${CAT_COLOR[c]||'var(--c11)'}" stroke-width="${SW}"
         stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}" stroke-dashoffset="${(-cursor).toFixed(2)}"
-        transform="rotate(-90 ${CX} ${CY})"><title>${esc(c)} ${(v/total*100).toFixed(0)}%</title></circle>`;
+        transform="rotate(-90 ${CX} ${CY})"><title>${esc(catLabel(c))} ${(v/total*100).toFixed(0)}%</title></circle>`;
       cursor += dash;
       return html;
     }).join('');
@@ -1227,9 +1500,9 @@ function renderRing(rows, total){
   $('ring-svg').innerHTML = track + segs;
   if(total > 0){
     const top = rows[0];
-    $('ring-center').innerHTML = `<b>${(top[1]/total*100).toFixed(0)}%</b><span>${esc(top[0])}</span>`;
+    $('ring-center').innerHTML = `<b>${(top[1]/total*100).toFixed(0)}%</b><span>${esc(catLabel(top[0]))}</span>`;
   } else {
-    $('ring-center').innerHTML = `<b>—</b><span>还没有数据</span>`;
+    $('ring-center').innerHTML = `<b>—</b><span>${t('noDataYet')}</span>`;
   }
 }
 
@@ -1252,6 +1525,7 @@ function rangeAgg(from, to){
 // 人话小结：本期花了多少、大头是什么、跟上一期比怎么样
 function composeReportText(total, incomeTotal, rows, prevExpense){
   if(total <= 0 && incomeTotal <= 0) return '';
+  if(getLang()==='en') return composeReportTextEN(total, incomeTotal, rows, prevExpense);
   const parts = [];
   parts.push(total>0
     ? `这段时间一共花了 ¥${money(total)}${incomeTotal>0?`，收入 ¥${money(incomeTotal)}`:''}`
@@ -1276,6 +1550,32 @@ function composeReportText(total, incomeTotal, rows, prevExpense){
     parts.push(balance>=0 ? `结余 +¥${money(balance)}` : `倒贴了 ¥${money(Math.abs(balance))}`);
   }
   return parts.join('，') + '。';
+}
+function composeReportTextEN(total, incomeTotal, rows, prevExpense){
+  const parts = [];
+  parts.push(total>0
+    ? `You spent a total of ¥${money(total)} this period${incomeTotal>0?`, with ¥${money(incomeTotal)} in income`:''}`
+    : `No spending this period${incomeTotal>0?`, with ¥${money(incomeTotal)} in income`:''}`);
+
+  if(rows.length && total>0){
+    const top = rows[0];
+    parts.push(`the biggest category was "${catLabel(top[0])}" at ¥${money(top[1])} (${(top[1]/total*100).toFixed(0)}% of total)`);
+  }
+
+  if(prevExpense > 0 && total > 0){
+    const diff = total - prevExpense;
+    if(Math.abs(diff) >= 0.01){
+      parts.push(diff>0 ? `¥${money(Math.abs(diff))} more than last period` : `¥${money(Math.abs(diff))} less than last period`);
+    } else {
+      parts.push('about the same as last period');
+    }
+  }
+
+  if(incomeTotal > 0){
+    const balance = incomeTotal - total;
+    parts.push(balance>=0 ? `balance +¥${money(balance)}` : `¥${money(Math.abs(balance))} in the red`);
+  }
+  return parts.join(', ') + '.';
 }
 
 /* ============================================================
@@ -1309,7 +1609,9 @@ function checkAutoReports(){
     const prevWeekStart = new Date(lastWeekStart); prevWeekStart.setDate(prevWeekStart.getDate()-7);
     const eShow = new Date(lastWeekEnd); eShow.setDate(eShow.getDate()-1);
     const sameMonth = lastWeekStart.getMonth()===eShow.getMonth();
-    const label = (lastWeekStart.getMonth()+1)+'月'+lastWeekStart.getDate()+'日 – ' + (sameMonth?'':(eShow.getMonth()+1)+'月') + eShow.getDate()+'日';
+    const label = getLang()==='en'
+      ? monthDayLabel(lastWeekStart) + ' – ' + (sameMonth ? eShow.getDate() : monthDayLabel(eShow))
+      : (lastWeekStart.getMonth()+1)+'月'+lastWeekStart.getDate()+'日 – ' + (sameMonth?'':(eShow.getMonth()+1)+'月') + eShow.getDate()+'日';
     const rec = generateStoredReport('week', lastWeekStart, lastWeekEnd, prevWeekStart, lastWeekStart, label);
     if(rec) DB.reports.push(rec);
     DB.pref.reportedWeekKey = lastWeekKey;
@@ -1324,7 +1626,9 @@ function checkAutoReports(){
   const lastMonthKey = lastMonthStart.getFullYear()+'-'+pad2(lastMonthStart.getMonth()+1);
   if(DB.pref.reportedMonthKey !== lastMonthKey){
     const prevMonthStart = new Date(now.getFullYear(), now.getMonth()-2, 1);
-    const label = lastMonthStart.getFullYear()+'年'+(lastMonthStart.getMonth()+1)+'月';
+    const label = getLang()==='en'
+      ? MONTHS_EN[lastMonthStart.getMonth()]+' '+lastMonthStart.getFullYear()
+      : lastMonthStart.getFullYear()+'年'+(lastMonthStart.getMonth()+1)+'月';
     const rec = generateStoredReport('month', lastMonthStart, lastMonthEnd, prevMonthStart, lastMonthStart, label);
     if(rec) DB.reports.push(rec);
     DB.pref.reportedMonthKey = lastMonthKey;
@@ -1341,13 +1645,13 @@ function renderReports(){
   const box = $('reports-body');
   const reports = (DB.reports||[]).slice().sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
   if(!reports.length){
-    box.innerHTML = `<div class="empty"><p>还没有周报/月报</p><small>每周一、每月1号会自动生成上一期的小结</small></div>`;
+    box.innerHTML = `<div class="empty"><p>${t('reportsEmpty')}</p><small>${t('reportsEmptyHint')}</small></div>`;
     return;
   }
   box.innerHTML = reports.map(r=>`
     <div class="report-row">
       <div class="report-head">
-        <span class="report-tag">${r.type==='week'?'周报':'月报'}</span>
+        <span class="report-tag">${r.type==='week'?t('reportWeek'):t('reportMonth')}</span>
         <span class="report-period">${esc(r.periodLabel)}</span>
       </div>
       <p class="report-text">${esc(r.text)}</p>
@@ -1361,7 +1665,7 @@ function pendingReview(){ return DB.tx.filter(t=>t.needsReview); }
 function updateReviewBadge(){
   const n = pendingReview().length;
   $('review-badge').hidden = n===0;
-  if(n) $('review-badge').textContent = n + ' 待分类';
+  if(n) $('review-badge').textContent = t('reviewBadge', n);
 }
 let reviewQueue = [];
 let reviewIdx = 0;
@@ -1374,26 +1678,26 @@ function openReview(){
 function renderReviewCard(){
   const box = $('review-body');
   if(reviewIdx >= reviewQueue.length){
-    box.innerHTML = `<div class="empty"><p>都确认完了</p><small>以后遇到同样的商户会自动记对分类</small></div>`;
+    box.innerHTML = `<div class="empty"><p>${t('reviewDone')}</p><small>${t('reviewDoneHint')}</small></div>`;
     return;
   }
-  const t = reviewQueue[reviewIdx];
-  const CATLIST = t.type==='income' ? INCOME_CATS : CATS;
+  const rec = reviewQueue[reviewIdx];
+  const CATLIST = rec.type==='income' ? INCOME_CATS : CATS;
   box.innerHTML = `
-    <div class="eyebrow" style="margin:18px 0 6px">${reviewIdx+1} / ${reviewQueue.length} · ${t.time.slice(5,16).replace('T',' ')}</div>
-    <div style="font-size:17px;margin-bottom:4px">${esc(t.merchant)}</div>
-    <div class="num" style="font-size:20px;margin-bottom:18px;color:${t.type==='income'?'var(--moss)':'var(--ink)'}">${t.type==='income'?'+':'−'}¥${money(t.amount)}</div>
-    <div class="eyebrow" style="margin-bottom:8px">这一笔该归到哪一类？</div>
+    <div class="eyebrow" style="margin:18px 0 6px">${reviewIdx+1} / ${reviewQueue.length} · ${rec.time.slice(5,16).replace('T',' ')}</div>
+    <div style="font-size:17px;margin-bottom:4px">${esc(merchantLabel(rec.merchant))}</div>
+    <div class="num" style="font-size:20px;margin-bottom:18px;color:${rec.type==='income'?'var(--moss)':'var(--ink)'}">${rec.type==='income'?'+':'−'}¥${money(rec.amount)}</div>
+    <div class="eyebrow" style="margin-bottom:8px">${t('reviewWhich')}</div>
     <div class="chips" id="review-chips"></div>
-    <button class="row-btn" id="review-skip" style="margin-top:18px">先跳过<span class="go">下一笔</span></button>
+    <button class="row-btn" id="review-skip" style="margin-top:18px">${t('reviewSkip')}<span class="go">${t('reviewNext')}</span></button>
   `;
   $('review-chips').innerHTML = CATLIST.map(c=>
-    `<button class="chip" data-cat="${c.n}">${seal(c.n,'sm')}${c.n}</button>`).join('');
+    `<button class="chip" data-cat="${c.n}">${seal(c.n,'sm')}${catLabel(c.n)}</button>`).join('');
   $('review-chips').querySelectorAll('[data-cat]').forEach(b=>{
     b.onclick = ()=>{
-      t.category = b.dataset.cat;
-      t.needsReview = false;
-      remember(t.merchant, t.category, t.type);
+      rec.category = b.dataset.cat;
+      rec.needsReview = false;
+      remember(rec.merchant, rec.category, rec.type);
       saveDB();
       reviewIdx++;
       renderReviewCard();
@@ -1401,7 +1705,7 @@ function renderReviewCard(){
     };
   });
   $('review-skip').onclick = ()=>{
-    t.needsReview = false;
+    rec.needsReview = false;
     saveDB();
     reviewIdx++;
     renderReviewCard();
@@ -1435,6 +1739,7 @@ let amtStr = '';
 let pickedCat = null;
 let guessedCat = null;
 let currentType = 'expense';
+let editingId = null;
 
 function renderCatChips(){
   const CATLIST = currentType === 'income' ? INCOME_CATS : CATS;
@@ -1442,13 +1747,40 @@ function renderCatChips(){
     const on = pickedCat===c.n;
     const guess = !pickedCat && guessedCat===c.n;
     return `<button class="chip${guess?' guessed':''}" aria-pressed="${on}" data-cat="${c.n}">
-      ${seal(c.n,'sm')}${c.n}</button>`;
+      ${seal(c.n,'sm')}${catLabel(c.n)}</button>`;
   }).join('');
-  $('cat-label').textContent = guessedCat && !pickedCat ? '分类 · 已自动判断为「'+guessedCat+'」' : '分类';
   $('cat-chips').querySelectorAll('[data-cat]').forEach(b=>{
-    b.onclick = ()=>{ pickedCat = (pickedCat===b.dataset.cat)? null : b.dataset.cat; renderCatChips(); };
+    b.onclick = ()=>{
+      pickedCat = b.dataset.cat;
+      renderCatChips();
+      updateCatPill();
+      closeCatPop();
+    };
   });
 }
+function updateCatPill(){
+  const cat = pickedCat || guessedCat;
+  const iconHtml = cat
+    ? seal(cat, 'sm')
+    : `<i class="seal sm" style="color:var(--ink-35)"><svg viewBox="0 0 24 24">${ICON_DOTS}</svg></i>`;
+  $('cat-pill').innerHTML = iconHtml +
+    `<span>${cat ? esc(catLabel(cat)) : t('catPillDefault')}</span>` +
+    '<svg viewBox="0 0 24 24" class="cat-pill-go"><path d="M7 10l5 5 5-5"/></svg>';
+  $('cat-pill').classList.toggle('guessed', !!(guessedCat && !pickedCat));
+}
+function openCatPop(){
+  renderCatChips();
+  $('cat-pop').hidden = false;
+}
+function closeCatPop(){
+  $('cat-pop').hidden = true;
+}
+$('cat-pill').onclick = (e)=>{
+  e.stopPropagation();
+  if($('cat-pop').hidden) openCatPop(); else closeCatPop();
+};
+$('cat-pop').onclick = (e)=> e.stopPropagation();
+document.addEventListener('click', ()=>{ if(!$('cat-pop').hidden) closeCatPop(); });
 $('type-toggle').querySelectorAll('[role=tab]').forEach(b=>{
   b.onclick = ()=>{
     $('type-toggle').querySelectorAll('[role=tab]').forEach(x=> x.setAttribute('aria-selected', x===b?'true':'false'));
@@ -1458,6 +1790,7 @@ $('type-toggle').querySelectorAll('[role=tab]').forEach(b=>{
     guessedCat = v ? classify(v, '', '', currentType) : null;
     $('amt-display').classList.toggle('income', currentType==='income');
     renderCatChips();
+    updateCatPill();
   };
 });
 function renderAmt(){
@@ -1489,12 +1822,13 @@ $('in-merchant').oninput = ()=>{
   const noneCat = currentType==='income' ? '其他收入' : '其他';
   if(guessedCat===noneCat && v.length<2) guessedCat = null;
   renderCatChips();
+  updateCatPill();
 };
 function resetTimeField(){
   $('in-time').value = localISO(new Date());
   $('in-time').hidden = true;
   $('time-toggle').hidden = false;
-  $('time-preview').textContent = '现在';
+  $('time-preview').textContent = t('timeNow');
 }
 $('time-toggle').onclick = ()=>{
   $('time-toggle').hidden = true;
@@ -1506,17 +1840,55 @@ $('in-time').onchange = ()=>{
   if(v) $('time-preview').textContent = v.slice(5,10).replace('-','/') + ' ' + v.slice(11,16);
 };
 $('btn-add').onclick = ()=>{
+  editingId = null;
+  $('sheet-add-title').textContent = t('addTitle');
+  $('btn-save').textContent = t('saveBtnNew');
   amtStr=''; pickedCat=null; guessedCat=null; currentType='expense';
   $('in-merchant').value='';
   $('type-toggle').querySelectorAll('[role=tab]').forEach(x=> x.setAttribute('aria-selected', x.dataset.type==='expense'?'true':'false'));
   $('amt-display').classList.remove('income');
   resetTimeField();
-  renderAmt(); renderCatChips();
+  renderAmt(); renderCatChips(); updateCatPill(); closeCatPop();
   sheetOpen('sheet-add');
 };
+function openEditSheet(id){
+  const rec = DB.tx.find(x=>x.id===id);
+  if(!rec) return;
+  editingId = id;
+  $('sheet-add-title').textContent = t('editTitle');
+  $('btn-save').textContent = t('saveBtnEdit');
+  amtStr = String(rec.amount);
+  pickedCat = rec.category;
+  guessedCat = rec.category;
+  currentType = rec.type;
+  $('in-merchant').value = rec.merchant === '未填写' ? '' : rec.merchant;
+  $('type-toggle').querySelectorAll('[role=tab]').forEach(x=> x.setAttribute('aria-selected', x.dataset.type===currentType?'true':'false'));
+  $('amt-display').classList.toggle('income', currentType==='income');
+  $('in-time').value = rec.time;
+  $('in-time').hidden = true;
+  $('time-toggle').hidden = false;
+  $('time-preview').textContent = rec.time.slice(5,10).replace('-','/') + ' ' + rec.time.slice(11,16);
+  renderAmt(); renderCatChips(); updateCatPill(); closeCatPop();
+  sheetOpen('sheet-add');
+}
 $('btn-save').onclick = ()=>{
   const merchant = $('in-merchant').value.trim();
   const cat = pickedCat || guessedCat || classify(merchant, '', '', currentType);
+  if(editingId){
+    const id = editingId;
+    const rec = updateTx(id, {
+      amount: Number(amtStr),
+      merchant: merchant || '未填写',
+      category: cat,
+      time: $('in-time').value || localISO(new Date()),
+      type: currentType
+    });
+    editingId = null;
+    sheetClose();
+    if(rec) toast(rec, t('toastSavedEdit'));
+    else toast(null, t('toastSaveFailDup'));
+    return;
+  }
   const rec = addTx({
     amount: Number(amtStr),
     merchant: merchant || '未填写',
@@ -1526,8 +1898,8 @@ $('btn-save').onclick = ()=>{
     type: currentType
   }, {learn: !!(pickedCat && merchant)});
   sheetClose();
-  if(rec) toast(rec, currentType==='income' ? '已记入收入' : '已记下');
-  else toast(null, '这一笔已经记过了');
+  if(rec) toast(rec, currentType==='income' ? t('toastIncomeAdded') : t('toastExpenseAdded'));
+  else toast(null, t('toastDup'));
 };
 
 /* ============================================================
@@ -1594,7 +1966,7 @@ async function importFile(file){
   const text = await decodeFile(file);
   const rows = parseCSV(text);
   const hi = findHeader(rows);
-  if(hi < 0) return {file:file.name, err:'找不到表头，可能不是支付宝或微信的账单 CSV'};
+  if(hi < 0) return {file:file.name, err:t('importNoHeader')};
 
   const H = rows[hi].map(x=>String(x).trim());
   const iTime  = colIndex(H, ['交易时间','付款时间','交易创建时间']);
@@ -1607,7 +1979,7 @@ async function importFile(file){
   const iNo    = colIndex(H, ['交易订单号','交易单号','交易号']);
   const iNote  = colIndex(H, ['备注']);
 
-  if(iTime<0 || iAmt<0) return {file:file.name, err:'账单缺少时间或金额列'};
+  if(iTime<0 || iAmt<0) return {file:file.name, err:t('importMissingCols')};
 
   let added=0, dup=0, skip=0;
   for(let r=hi+1; r<rows.length; r++){
@@ -1654,21 +2026,21 @@ async function importFile(file){
 async function handleFiles(files){
   const box = $('import-log');
   box.hidden = false;
-  box.innerHTML = '正在读取…';
+  box.innerHTML = t('importReading');
   const out = [];
   for(const f of files){
     try{ out.push(await importFile(f)); }
-    catch(e){ out.push({file:f.name, err:'读取失败：'+e.message}); }
+    catch(e){ out.push({file:f.name, err:t('importReadFail', e.message)}); }
   }
   saveDB(); render();
   box.innerHTML = out.map(r=> r.err
     ? `<div><b>${esc(r.file)}</b><br><span class="bad">${esc(r.err)}</span></div>`
-    : `<div><b>${esc(r.file)}</b><br>新增 ${r.added} 笔（含支出与收入）· 重复跳过 ${r.dup} · 无法识别跳过 ${r.skip}</div>`
-  ).join('<br>') + (storageOK ? '' : '<br><span class="bad">注意：这个环境不能持久保存，刷新会丢。请在自己的浏览器里打开。</span>');
+    : `<div><b>${esc(r.file)}</b><br>${t('importSummary', r.added, r.dup, r.skip)}</div>`
+  ).join('<br>') + (storageOK ? '' : `<br><span class="bad">${t('importNoPersist')}</span>`);
 
   const pend = pendingReview().length;
   if(pend){
-    box.innerHTML += `<div style="margin-top:14px"><button class="file-btn" id="review-now">现在确认 ${pend} 笔分类</button></div>`;
+    box.innerHTML += `<div style="margin-top:14px"><button class="file-btn" id="review-now">${t('reviewNowBtn', pend)}</button></div>`;
     $('review-now').onclick = ()=>{ sheetClose(); setTimeout(openReview, 260); };
   }
 }
@@ -1736,7 +2108,7 @@ function handleURLIntake(){
   try{ history.replaceState(null,'',location.pathname); }catch(e){}
 
   if(!isFinite(amount) || amount<=0){
-    if(rawText || q.has('amount')) toast(null,'没能识别出金额，请手动记');
+    if(rawText || q.has('amount')) toast(null, t('toastNoAmount'));
     return;
   }
   const rec = addTx({
@@ -1748,8 +2120,8 @@ function handleURLIntake(){
     type: type === 'income' ? 'income' : 'expense',
     note: rawText.slice(0,120)
   });
-  if(rec) toast(rec, rec.type==='income' ? '自动记入收入' : '自动记入');
-  else toast(null, '这一笔已经记过了');
+  if(rec) toast(rec, rec.type==='income' ? t('toastAutoIncome') : t('toastAutoExpense'));
+  else toast(null, t('toastDup'));
 }
 
 /* ============================================================
@@ -1759,7 +2131,7 @@ let toastTimer = null, lastRec = null;
 function toast(rec, msg){
   lastRec = rec;
   $('toast-amt').textContent = rec ? (rec.type==='income'?'+':'−')+'¥'+money(rec.amount) : '';
-  $('toast-txt').textContent = rec ? (msg + ' · ' + rec.merchant + ' · ' + rec.category) : msg;
+  $('toast-txt').textContent = rec ? (msg + ' · ' + merchantLabel(rec.merchant) + ' · ' + catLabel(rec.category)) : msg;
   $('toast-undo').style.display = rec ? '' : 'none';
   $('toast').classList.add('on');
   clearTimeout(toastTimer);
@@ -1786,6 +2158,8 @@ document.querySelectorAll('#view-toggle [data-view]').forEach(b=>{
   b.onclick = ()=>{ setCompView(b.dataset.view); };
 });
 document.addEventListener('click', e=>{
+  const ed = e.target.closest('[data-edit]');
+  if(ed){ openEditSheet(ed.dataset.edit); return; }
   const d = e.target.closest('[data-del]');
   if(d) delTx(d.dataset.del);
 });
@@ -1801,28 +2175,32 @@ $('btn-reports').onclick = ()=>{
 };
 
 /* 设置 */
-$('btn-settings').onclick = ()=>{
+function refreshSettingsPanel(){
   if(BRIDGE){
     $('url-api-group').hidden = true;
     $('btn-notif-access').hidden = false;
     const granted = BRIDGE.isNotificationAccessGranted && BRIDGE.isNotificationAccessGranted();
     $('notif-access-label').innerHTML = granted
-      ? '通知监听权限 · 已开启<small>正在自动捕捉微信/支付宝付款通知</small>'
-      : '通知监听权限 · 未开启<small>没开的话不会自动记账，点右边去系统设置里开</small>';
-    $('notif-access-go').textContent = granted ? '重新检查' : '去开启';
-    $('storage-note').textContent = '数据只存在这台手机本地，不联网、不上传任何地方，卸载 App 才会丢。';
+      ? `${t('notifAccessOnLabel')}<small>${t('notifAccessOnDesc')}</small>`
+      : `${t('notifAccessOffLabel')}<small>${t('notifAccessOffDesc')}</small>`;
+    $('notif-access-go').textContent = granted ? t('notifAccessRecheck') : t('notifAccessGo');
+    $('storage-note').textContent = t('storageNoteBridge');
   } else {
     const base = location.origin + location.pathname;
+    const isEn = getLang()==='en';
     $('api-code').innerHTML =
-      esc(base) + '?<b>amount</b>=18.5&<b>merchant</b>=瑞幸<br><br>' +
-      '记收入加 <b>&type=income</b>：<br>' +
-      esc(base) + '?<b>amount</b>=8000&<b>merchant</b>=工资&<b>type</b>=income<br><br>' +
-      '或者直接丢原始通知文本，自动识别金额/商户/收支方向：<br>' +
-      esc(base) + '?<b>text</b>=微信支付-向瑞幸咖啡付款18.50元';
+      esc(base) + `?<b>amount</b>=18.5&<b>merchant</b>=${isEn?'Starbucks':'瑞幸'}<br><br>` +
+      t('apiCodeIncomeHint') + '<br>' +
+      esc(base) + `?<b>amount</b>=8000&<b>merchant</b>=${isEn?'Salary':'工资'}&<b>type</b>=income<br><br>` +
+      t('apiCodeTextHint') + '<br>' +
+      esc(base) + `?<b>text</b>=${isEn?'WeChat Pay - paid Starbucks 18.50':'微信支付-向瑞幸咖啡付款18.50元'}`;
     $('storage-note').textContent = storageOK
-      ? '数据只存在这台设备的浏览器里，不上传任何地方。持久化正常，关掉浏览器数据也在。'
-      : '数据只存在这台设备的浏览器里，不上传任何地方。当前环境不支持持久化保存，刷新会丢数据 —— 请把这个文件放到自己的浏览器或服务器上打开。';
+      ? t('storageNoteWebOK')
+      : t('storageNoteWebBad');
   }
+}
+$('btn-settings').onclick = ()=>{
+  refreshSettingsPanel();
   sheetOpen('sheet-settings');
 };
 $('btn-notif-access').onclick = ()=>{
@@ -1846,21 +2224,21 @@ $('file-restore').onchange = async e=>{
     });
     Object.assign(DB.memory, d.memory||{});
     saveDB(); render(); sheetClose();
-    toast(null, '合并了 '+n+' 笔记录');
-  }catch(err){ toast(null,'备份文件读不出来'); }
+    toast(null, t('toastMerged', n));
+  }catch(err){ toast(null, t('toastRestoreFail')); }
   e.target.value='';
 };
 $('btn-copy-url').onclick = async ()=>{
   const url = location.origin + location.pathname + '?amount=&merchant=';
-  try{ await navigator.clipboard.writeText(url); toast(null,'接口地址已复制'); }
-  catch(e){ toast(null,'复制失败，请手动选中下面那行'); }
+  try{ await navigator.clipboard.writeText(url); toast(null, t('toastUrlCopied')); }
+  catch(e){ toast(null, t('toastCopyFail')); }
 };
 $('btn-wipe').onclick = ()=>{
-  if(!confirm('清空所有记录和分类记忆？这一步不能撤销。')) return;
+  if(!confirm(t('confirmWipe'))) return;
   DB = {tx:[], memory:{}, pref:{}, reports:[], v:1};
   saveDB(); render(); sheetClose();
   updateReportsBadge();
-  toast(null,'已清空');
+  toast(null, t('toastWiped'));
 };
 
 /* ============================================================
@@ -1869,8 +2247,8 @@ $('btn-wipe').onclick = ()=>{
 $('in-time').value = localISO(new Date());
 checkAutoReports();
 updateReportsBadge();
-renderThemeRow();
-render();
+renderLangRow();
+applyLang();
 handleURLIntake();
 </script>
 </body>
