@@ -36,6 +36,8 @@ class MainActivity : AppCompatActivity() {
         webView.addJavascriptInterface(WebAppInterface(this), "AndroidBridge")
         webView.loadUrl("file:///android_asset/www/index.html")
 
+        ReportScheduler.ensureNotificationChannel(this)
+        ReportScheduler.scheduleAll(this)
         maybeRequestNotificationAccessOnce()
     }
 
@@ -44,10 +46,11 @@ class MainActivity : AppCompatActivity() {
         // 从后台切回来时，把通知监听服务这段时间写入的新记录拉进来
         if (::webView.isInitialized) {
             webView.evaluateJavascript(
-                "window.reloadFromBridge && window.reloadFromBridge();",
+                "window.reloadFromBridge && window.reloadFromBridge(); window.refreshSettingsPanel && window.refreshSettingsPanel();",
                 null
             )
         }
+        ReportScheduler.scheduleAll(this)
     }
 
     private fun maybeRequestNotificationAccessOnce() {

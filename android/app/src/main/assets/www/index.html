@@ -28,12 +28,12 @@
   --paper-rgb:241,234,217;
   --ink-rgb:32,50,74;
 
-  --c1:#A24B3E; --c2:#4A4038; --c3:#35507A; --c4:#6B4B70;
-  --c5:#2F7A78; --c6:#A67F35; --c7:#3F5E43; --c8:#7A3B4A;
-  --c9:#726A54; --c10:#5C6E52; --c11:#7C7669;
+  --c1:#4D2519; --c2:#602F20; --c3:#743927; --c4:#88432D;
+  --c5:#9C4C34; --c6:#B0563B; --c7:#C16144; --c8:#C77258;
+  --c9:#CE836C; --c10:#D59480; --c11:#DBA594;
 
-  --i1:#3C6E4A; --i2:#6E7A3C; --i3:#2F7A72;
-  --i4:#C0603F; --i5:#6E6B4A; --i6:#7A8570;
+  --i1:#5C2D1F; --i2:#7C3D29; --i3:#9C4C34;
+  --i4:#BC5C3F; --i5:#C9765D; --i6:#D4917D;
 
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',sans-serif;
@@ -58,12 +58,12 @@
   --paper-rgb:253,238,242;
   --ink-rgb:107,61,85;
 
-  --c1:#E86A82; --c2:#A9727E; --c3:#7C93D6; --c4:#B876C7;
-  --c5:#4FB6AE; --c6:#E6A15C; --c7:#6FAE7C; --c8:#D65C6E;
-  --c9:#BE94A0; --c10:#6FB3D9; --c11:#B7A3AC;
+  --c1:#862744; --c2:#992D4D; --c3:#AC3257; --c4:#BF3860;
+  --c5:#C9466D; --c6:#CF597C; --c7:#D46C8B; --c8:#DA7F9A;
+  --c9:#DF92A9; --c10:#E5A5B8; --c11:#EAB8C7;
 
-  --i1:#4FB89C; --i2:#8CB86A; --i3:#3FA6A0;
-  --i4:#E85C7A; --i5:#9BAE7A; --i6:#7FBFAE;
+  --i1:#9E2E50; --i2:#BC375F; --i3:#CC4E74;
+  --i4:#D46C8B; --i5:#DD8AA3; --i6:#E6A8BB;
 }
 /* ---------- 主题：极简黑白 ---------- */
 :root[data-theme="mono"]{
@@ -80,12 +80,12 @@
   --paper-rgb:252,252,250;
   --ink-rgb:26,26,24;
 
-  --c1:#6B5D52; --c2:#4A5259; --c3:#52606B; --c4:#5F5259;
-  --c5:#4F615C; --c6:#6B6152; --c7:#5A6152; --c8:#6B5259;
-  --c9:#5C5C58; --c10:#525F6B; --c11:#8C8C86;
+  --c1:#412A1B; --c2:#583924; --c3:#6E472D; --c4:#855536;
+  --c5:#9B643F; --c6:#B17248; --c7:#BD835D; --c8:#C69473;
+  --c9:#CFA58A; --c10:#D8B7A0; --c11:#E1C8B7;
 
-  --i1:#4A5F4F; --i2:#5C5F47; --i3:#47595C;
-  --i4:#6B4A47; --i5:#5C5947; --i6:#59605A;
+  --i1:#503321; --i2:#744B2F; --i3:#98623E;
+  --i4:#B87A51; --i5:#C79675; --i6:#D6B29A;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
@@ -207,18 +207,20 @@ main{padding:0 var(--pad)}
 }
 .bar i{display:block;height:100%;transition:width .5s cubic-bezier(.2,.7,.2,1)}
 .bar-ticks{
-  display:flex;justify-content:space-between;
+  position:relative;height:14px;
   border-top:1px solid var(--rule);
   padding-top:5px;margin-top:0;
 }
 .bar-ticks span{font-family:var(--mono);font-size:9.5px;color:var(--ink-35);letter-spacing:.06em}
+.bar-ticks .tick-cat{position:absolute;top:5px;text-align:center;white-space:nowrap}
+.bar-ticks .tick-max{position:absolute;top:5px;right:0}
 
 .ring-box{position:relative;display:flex;align-items:center;justify-content:center;padding:6px 0 2px}
-.ring-box svg{width:158px;height:158px}
+.ring-box svg{width:100%;max-width:320px;height:auto}
 .ring-box circle{transition:stroke-dasharray .5s cubic-bezier(.2,.7,.2,1),stroke-dashoffset .5s cubic-bezier(.2,.7,.2,1)}
-.ring-center{position:absolute;text-align:center;pointer-events:none}
-.ring-center b{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;font-weight:600;color:var(--ink)}
-.ring-center span{font-family:var(--mono);font-size:10px;color:var(--ink-35);letter-spacing:.04em}
+.ring-callout-line{fill:none;stroke-width:1.2}
+.ring-callout-text{font-family:var(--mono);font-size:8.5px}
+.ring-callout-text .pct{fill:var(--ink-35)}
 
 .trend-box{padding:8px 0 2px}
 .trend-box svg{width:100%;height:auto;display:block}
@@ -463,6 +465,14 @@ main{padding:0 var(--pad)}
 }
 .theme-chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .theme-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.report-time-row{display:flex;gap:10px}
+.report-time-field{flex:1;min-width:0}
+.report-time-field label{display:block;margin-bottom:7px}
+.report-time-field select{
+  width:100%;padding:9px 10px;background:var(--card);
+  border:1px solid var(--rule);border-radius:0;
+  font-family:var(--mono);font-size:13px;color:var(--ink);
+}
 .code{
   font-family:var(--mono);font-size:11px;background:var(--card);
   border:1px solid var(--rule);padding:11px;margin-top:9px;
@@ -554,8 +564,7 @@ main{padding:0 var(--pad)}
       </div>
       <div id="comp-ring" hidden>
         <div class="ring-box">
-          <svg viewBox="0 0 120 120" id="ring-svg"></svg>
-          <div class="ring-center" id="ring-center"></div>
+          <svg viewBox="0 0 300 170" id="ring-svg"></svg>
         </div>
       </div>
       <div id="comp-line" hidden>
@@ -663,6 +672,31 @@ main{padding:0 var(--pad)}
   <div style="height:calc(20px + var(--sab))"></div>
 </div>
 
+<!-- 自动记账诊断 -->
+<div class="sheet" id="sheet-diagnostics" role="dialog" aria-label="自动记账诊断">
+  <div class="sheet-head">
+    <h2 data-i18n="diagnosticsTitle">自动记账诊断</h2>
+    <button class="close" data-close data-i18n="closeBtn">关闭</button>
+  </div>
+  <p style="color:var(--ink-60);font-size:13px" data-i18n="diagnosticsDesc">这里只记录识别结果，不保存通知或支付页面的完整原文。</p>
+  <div class="log" id="diagnostics-body"></div>
+  <button class="row-btn" id="btn-clear-diagnostics"><span data-i18n="diagnosticsClear">清空诊断记录</span><span class="go">×</span></button>
+  <div style="height:calc(20px + var(--sab))"></div>
+</div>
+
+<!-- 辅助功能在正常流程里单独披露，不与其他授权混在一起 -->
+<div class="sheet" id="sheet-accessibility-consent" role="dialog" aria-label="增强自动记账说明">
+  <div class="sheet-head">
+    <h2 data-i18n="accessibilityConsentTitle">增强自动记账</h2>
+    <button class="close" data-close data-i18n="closeBtn">关闭</button>
+  </div>
+  <div class="row-block" style="line-height:1.8">
+    <span data-i18n="accessibilityConsentBody">开启后，Money Manager 只会在微信或支付宝位于前台时读取当前支付结果页面，用来识别金额和收款方。它不会读取聊天内容、不会自动点击、不会截图，读取到的页面原文不会保存或上传。</span>
+  </div>
+  <button class="primary" id="btn-accessibility-accept" data-i18n="accessibilityConsentAccept">我理解，前往系统开启</button>
+  <div style="height:calc(20px + var(--sab))"></div>
+</div>
+
 <!-- 设置 -->
 <div class="sheet" id="sheet-settings" role="dialog" aria-label="设置与备份" data-i18n-aria="settingsAria">
   <div class="sheet-head">
@@ -676,6 +710,19 @@ main{padding:0 var(--pad)}
   <div class="row-block">
     <span data-i18n="langSectionTitle">语言</span>
     <div class="theme-row" id="lang-row"></div>
+  </div>
+  <div class="row-block">
+    <span><span data-i18n="reportTimeSectionTitle">小结生成时间</span><small data-i18n="reportTimeSectionDesc">周报固定周一、月报固定月初，可以调整几点生成</small></span>
+    <div class="report-time-row">
+      <div class="report-time-field">
+        <label class="eyebrow" data-i18n="reportTimeWeekLabel">周报 · 周一</label>
+        <select id="report-time-week"></select>
+      </div>
+      <div class="report-time-field">
+        <label class="eyebrow" data-i18n="reportTimeMonthLabel">月报 · 月初</label>
+        <select id="report-time-month"></select>
+      </div>
+    </div>
   </div>
   <button class="row-btn" id="btn-import">
     <span><span data-i18n="importRowTitle">导入账单</span><small data-i18n="importRowDesc">支付宝 / 微信导出的 CSV 账单</small></span>
@@ -700,6 +747,18 @@ main{padding:0 var(--pad)}
   <button class="row-btn" id="btn-notif-access" hidden>
     <span id="notif-access-label">通知监听权限<small>用于自动捕捉微信/支付宝付款通知</small></span>
     <span class="go" id="notif-access-go">去开启</span>
+  </button>
+  <button class="row-btn" id="btn-report-notif" hidden>
+    <span id="report-notif-label"></span>
+    <span class="go" id="report-notif-go"></span>
+  </button>
+  <button class="row-btn" id="btn-accessibility" hidden>
+    <span id="accessibility-label"></span>
+    <span class="go" id="accessibility-go"></span>
+  </button>
+  <button class="row-btn" id="btn-diagnostics" hidden>
+    <span><span data-i18n="diagnosticsRowTitle">自动记账诊断</span><small data-i18n="diagnosticsRowDesc">查看最近的识别、忽略与合并结果</small></span>
+    <span class="go" data-i18n="diagnosticsRowGo">查看</span>
   </button>
   <button class="row-btn" id="btn-wipe" style="border-bottom:none">
     <span style="color:var(--stamp)"><span data-i18n="wipeRowTitle">清空所有数据</span><small data-i18n="wipeRowDesc">不可恢复，请先导出备份</small></span>
@@ -823,12 +882,12 @@ const BRIDGE = typeof window.AndroidBridge !== 'undefined' ? window.AndroidBridg
 let memFallback = null;
 
 function loadDB(){
-  const blank = {tx:[], memory:{}, pref:{}, reports:[], v:1};
+  const blank = {tx:[], memory:{}, pref:{}, reports:[], v:1, _rev:0};
   try{
     const raw = BRIDGE ? BRIDGE.load() : localStorage.getItem(KEY);
     if(!raw) return blank;
     const d = JSON.parse(raw);
-    return {tx:Array.isArray(d.tx)?d.tx:[], memory:d.memory||{}, pref:d.pref||{}, reports:Array.isArray(d.reports)?d.reports:[], v:1};
+    return {tx:Array.isArray(d.tx)?d.tx:[], memory:d.memory||{}, pref:d.pref||{}, reports:Array.isArray(d.reports)?d.reports:[], v:1, _rev:Number(d._rev)||0};
   }catch(e){
     if(memFallback) return memFallback;
     return blank;
@@ -837,8 +896,15 @@ function loadDB(){
 function saveDB(){
   try{
     const json = JSON.stringify(DB);
-    if(BRIDGE) BRIDGE.save(json);
-    else localStorage.setItem(KEY, json);
+    if(BRIDGE){
+      const saved = BRIDGE.save(json);
+      if(saved){
+        const d = JSON.parse(saved);
+        DB.tx = Array.isArray(d.tx) ? d.tx : DB.tx;
+        DB.reports = Array.isArray(d.reports) ? d.reports : DB.reports;
+        DB._rev = Number(d._rev)||DB._rev||0;
+      }
+    } else localStorage.setItem(KEY, json);
     return true;
   }catch(e){
     memFallback = DB;
@@ -1019,13 +1085,26 @@ const I18N = {
     reportsEmptyHint:'每周一、每月1号会自动生成上一期的小结',
     reportWeek:'周报', reportMonth:'月报',
     settingsTitle:'设置与备份', themeSectionTitle:'个性化界面', langSectionTitle:'语言',
+    reportTimeSectionTitle:'小结生成时间', reportTimeSectionDesc:'周报固定周一、月报固定月初，可以调整几点生成',
+    reportTimeWeekLabel:'周报 · 周一', reportTimeMonthLabel:'月报 · 月初',
     importRowTitle:'导入账单', importRowDesc:'支付宝 / 微信导出的 CSV 账单', importGo:'导入',
     exportRowTitle:'导出全部数据', exportRowDesc:'下载 JSON 备份，含记录和分类记忆', exportGo:'导出',
     restoreRowTitle:'恢复备份', restoreRowDesc:'选择之前导出的 JSON，合并进现有数据', restoreGo:'选择',
     apiRowTitle:'自动写入接口', apiRowDesc:'给 iOS 快捷指令 / Android 通知监听调用', apiGo:'复制',
-    notifAccessOnLabel:'通知监听权限 · 已开启', notifAccessOnDesc:'正在自动捕捉微信/支付宝付款通知',
+    notifAccessOnLabel:'通知监听权限 · 已开启', notifAccessOnDesc:'正在捕捉微信、支付宝和中信银行交易通知',
     notifAccessOffLabel:'通知监听权限 · 未开启', notifAccessOffDesc:'没开的话不会自动记账，点右边去系统设置里开',
     notifAccessRecheck:'重新检查', notifAccessGo:'去开启',
+    reportNotifOnLabel:'小结系统通知 · 已开启', reportNotifOnDesc:'周报和月报生成后会主动提醒',
+    reportNotifOffLabel:'小结系统通知 · 未开启', reportNotifOffDesc:'允许后才能在后台主动提醒', reportNotifGo:'允许',
+    accessibilityOnLabel:'增强自动记账 · 已开启', accessibilityOnDesc:'仅识别微信/支付宝当前支付结果页面',
+    accessibilityOffLabel:'增强自动记账 · 未开启', accessibilityOffDesc:'可补上没有系统通知的支付、红包和转账',
+    accessibilityGo:'了解并开启', accessibilityRecheck:'重新检查',
+    accessibilityConsentTitle:'增强自动记账',
+    accessibilityConsentBody:'开启后，Money Manager 只会在微信或支付宝位于前台时读取当前支付结果页面，用来识别金额和收款方。它不会读取聊天内容、不会自动点击、不会截图，读取到的页面原文不会保存或上传。',
+    accessibilityConsentAccept:'我理解，前往系统开启',
+    diagnosticsRowTitle:'自动记账诊断', diagnosticsRowDesc:'查看最近的识别、忽略与合并结果', diagnosticsRowGo:'查看',
+    diagnosticsTitle:'自动记账诊断', diagnosticsDesc:'这里只记录识别结果，不保存通知或支付页面的完整原文。', diagnosticsClear:'清空诊断记录', diagnosticsEmpty:'还没有识别记录',
+    diagRecorded:'已记账', diagMerged:'已合并', diagDuplicate:'重复跳过', diagIgnored:'不是交易，已忽略',
     wipeRowTitle:'清空所有数据', wipeRowDesc:'不可恢复，请先导出备份', wipeGo:'清空',
     storageNoteBridge:'数据只存在这台手机本地，不联网、不上传任何地方，卸载 App 才会丢。',
     storageNoteWebOK:'数据只存在这台设备的浏览器里，不上传任何地方。持久化正常，关掉浏览器数据也在。',
@@ -1079,13 +1158,26 @@ const I18N = {
     reportsEmptyHint:'A summary is generated automatically every Monday and on the 1st of each month',
     reportWeek:'Weekly', reportMonth:'Monthly',
     settingsTitle:'Settings & Backup', themeSectionTitle:'Appearance', langSectionTitle:'Language',
+    reportTimeSectionTitle:'Summary Timing', reportTimeSectionDesc:'Weekly is fixed to Monday, monthly to the 1st — you can adjust the hour',
+    reportTimeWeekLabel:'Weekly · Mon', reportTimeMonthLabel:'Monthly · 1st',
     importRowTitle:'Import Bill', importRowDesc:'CSV exported from Alipay / WeChat', importGo:'Import',
     exportRowTitle:'Export All Data', exportRowDesc:'Download a JSON backup, incl. records and learned categories', exportGo:'Export',
     restoreRowTitle:'Restore Backup', restoreRowDesc:'Choose a previously exported JSON to merge in', restoreGo:'Choose',
     apiRowTitle:'Auto-Capture API', apiRowDesc:'For iOS Shortcuts / Android notification listeners', apiGo:'Copy',
-    notifAccessOnLabel:'Notification Access · On', notifAccessOnDesc:'Auto-capturing WeChat/Alipay payment notifications',
+    notifAccessOnLabel:'Notification Access · On', notifAccessOnDesc:'Capturing WeChat, Alipay and CITIC transaction notifications',
     notifAccessOffLabel:'Notification Access · Off', notifAccessOffDesc:"Auto-capture won't work until this is on — tap to open system settings",
     notifAccessRecheck:'Recheck', notifAccessGo:'Turn On',
+    reportNotifOnLabel:'Summary Notifications · On', reportNotifOnDesc:'A system notification is sent when a report is ready',
+    reportNotifOffLabel:'Summary Notifications · Off', reportNotifOffDesc:'Allow notifications to receive reports in the background', reportNotifGo:'Allow',
+    accessibilityOnLabel:'Enhanced Capture · On', accessibilityOnDesc:'Reads only the current WeChat/Alipay payment-result screen',
+    accessibilityOffLabel:'Enhanced Capture · Off', accessibilityOffDesc:'Can recover payments, transfers and red packets with no notification',
+    accessibilityGo:'Learn & Enable', accessibilityRecheck:'Recheck',
+    accessibilityConsentTitle:'Enhanced Auto-Capture',
+    accessibilityConsentBody:'When enabled, Money Manager reads only the current payment-result screen while WeChat or Alipay is in the foreground, to identify the amount and payee. It does not read chats, click anything, take screenshots, save full screen text, or upload it.',
+    accessibilityConsentAccept:'I understand — open system settings',
+    diagnosticsRowTitle:'Capture Diagnostics', diagnosticsRowDesc:'See recent recorded, ignored and merged results', diagnosticsRowGo:'View',
+    diagnosticsTitle:'Capture Diagnostics', diagnosticsDesc:'Only recognition results are kept; full notification or screen text is never saved.', diagnosticsClear:'Clear diagnostics', diagnosticsEmpty:'No capture activity yet',
+    diagRecorded:'Recorded', diagMerged:'Merged', diagDuplicate:'Duplicate skipped', diagIgnored:'Not a transaction',
     wipeRowTitle:'Erase All Data', wipeRowDesc:'Cannot be undone — export a backup first', wipeGo:'Erase',
     storageNoteBridge:"Data is stored only on this phone — never uploaded anywhere. It's lost only if you uninstall the app.",
     storageNoteWebOK:'Data is stored only in this browser — never uploaded anywhere. Storage is working normally and survives closing the browser.',
@@ -1153,6 +1245,16 @@ function renderLangRow(){
   $('lang-row').querySelectorAll('[data-lang]').forEach(b=>{
     b.onclick = ()=> setLang(b.dataset.lang);
   });
+}
+function renderReportTimeRow(){
+  const hourOptions = Array.from({length:24}, (_,h)=> String(h).padStart(2,'0')+':00')
+    .map(v=>`<option value="${v}">${v}</option>`).join('');
+  $('report-time-week').innerHTML = hourOptions;
+  $('report-time-month').innerHTML = hourOptions;
+  $('report-time-week').value = getReportTimeWeek();
+  $('report-time-month').value = getReportTimeMonth();
+  $('report-time-week').onchange = ()=> setReportTimeWeek($('report-time-week').value);
+  $('report-time-month').onchange = ()=> setReportTimeMonth($('report-time-month').value);
 }
 
 /* ============================================================
@@ -1381,13 +1483,23 @@ function render(){
     $('bar').innerHTML = rows.map(([c,v]) =>
       `<i style="width:${(v/total*100).toFixed(3)}%;background:${CAT_COLOR[c]||'var(--c11)'}" title="${catLabel(c)} ¥${money(v)}"></i>`).join('');
     const top = rows[0], second = rows[1];
+    const topPct = top[1]/total*100;
+    const secondPct = second ? second[1]/total*100 : 0;
+    // 每个分类的文字标注跟它在色条里对应的那一段左右居中对齐
     $('bar-ticks').innerHTML =
-      `<span>${esc(catLabel(top[0]))} ${(top[1]/total*100).toFixed(0)}%</span>` +
-      `<span>${second ? esc(catLabel(second[0]))+' '+(second[1]/total*100).toFixed(0)+'%' : ''}</span>` +
-      `<span>${t('topSingle')} ¥${money(Math.max(...list.map(t=>t.amount)))}</span>`;
+      `<span class="tick-cat" style="left:0%;width:${topPct.toFixed(3)}%">${esc(catLabel(top[0]))} ${topPct.toFixed(0)}%</span>` +
+      (second ? `<span class="tick-cat" style="left:${topPct.toFixed(3)}%;width:${secondPct.toFixed(3)}%">${esc(catLabel(second[0]))} ${secondPct.toFixed(0)}%</span>` : '') +
+      `<span class="tick-max">${t('topSingle')} ¥${money(Math.max(...list.map(t=>t.amount)))}</span>`;
+    // 如果第二名的标注跟右边"最大单笔"的文字实际渲染出来是挤在一起的，就把第二名藏起来
+    const cats = $('bar-ticks').querySelectorAll('.tick-cat');
+    const secondEl = cats[1];
+    const maxEl = $('bar-ticks').querySelector('.tick-max');
+    if(secondEl && maxEl && secondEl.getBoundingClientRect().right > maxEl.getBoundingClientRect().left - 6){
+      secondEl.hidden = true;
+    }
   } else {
     $('bar').innerHTML = '';
-    $('bar-ticks').innerHTML = `<span>${t('noDataYet')}</span><span>—</span><span></span>`;
+    $('bar-ticks').innerHTML = `<span class="tick-cat" style="left:0%;width:50%">${t('noDataYet')}</span><span class="tick-max">—</span>`;
   }
   renderRing(rows, total);
 
@@ -1481,29 +1593,61 @@ function attachSwipeHandlers(){
 }
 
 // 圆环视图：跟横条用的是同一份 rows 数据，只是画法不同
+// 圆环外的引线标注——占比前三的分类各拉一条线出来，标上名字和百分比
+function truncLabel(s, max){
+  return s.length > max ? s.slice(0, max-1)+'…' : s;
+}
+function ringCallouts(callouts, cx, cy){
+  if(!callouts.length) return '';
+  const rStart = 57, rElbow = 70, armLen = 12, minGap = 20;
+  const pts = callouts.map(cal=>{
+    const rad = cal.angle * Math.PI / 180;
+    const sin = Math.sin(rad), cos = Math.cos(rad);
+    const side = sin >= 0 ? 1 : -1;
+    return {
+      ...cal, side,
+      sx: cx + rStart*sin, sy: cy - rStart*cos,
+      ex: cx + rElbow*sin, ey: cy - rElbow*cos,
+      ly: cy - rElbow*cos, // 标签初始纵坐标，跟拐点一样高
+    };
+  });
+  // 同一侧的标签如果挨得太近，从上到下依次撑开，避免文字压在一起
+  [-1,1].forEach(side=>{
+    const group = pts.filter(p=>p.side===side).sort((a,b)=>a.ly-b.ly);
+    for(let i=1;i<group.length;i++){
+      if(group[i].ly - group[i-1].ly < minGap) group[i].ly = group[i-1].ly + minGap;
+    }
+  });
+  return pts.map(p=>{
+    const lx = p.ex + p.side*armLen;
+    const anchor = p.side>0 ? 'start' : 'end';
+    const textX = lx + p.side*3;
+    const color = CAT_COLOR[p.cat] || 'var(--c11)';
+    return `
+      <path class="ring-callout-line" d="M${p.sx.toFixed(1)},${p.sy.toFixed(1)} L${p.ex.toFixed(1)},${p.ey.toFixed(1)} L${lx.toFixed(1)},${p.ly.toFixed(1)}" stroke="${color}"/>
+      <circle cx="${p.sx.toFixed(1)}" cy="${p.sy.toFixed(1)}" r="2" fill="${color}"/>
+      <text class="ring-callout-text" x="${textX.toFixed(1)}" y="${p.ly.toFixed(1)}" text-anchor="${anchor}" dominant-baseline="middle" fill="var(--ink-60)">${esc(truncLabel(catLabel(p.cat), 7))} <tspan class="pct">${p.pct.toFixed(0)}%</tspan></text>`;
+  }).join('');
+}
 function renderRing(rows, total){
-  const R = 50, CX = 60, CY = 60, SW = 14;
+  const R = 48, CX = 150, CY = 85, SW = 12;
   const circ = 2 * Math.PI * R;
   const track = `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="var(--paper-2)" stroke-width="${SW}"/>`;
   let segs = '';
+  const callouts = [];
   if(total > 0){
     let cursor = 0;
-    segs = rows.map(([c,v])=>{
+    segs = rows.map(([c,v], i)=>{
       const dash = v/total*circ;
       const html = `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${CAT_COLOR[c]||'var(--c11)'}" stroke-width="${SW}"
         stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}" stroke-dashoffset="${(-cursor).toFixed(2)}"
         transform="rotate(-90 ${CX} ${CY})"><title>${esc(catLabel(c))} ${(v/total*100).toFixed(0)}%</title></circle>`;
+      if(i < 3) callouts.push({cat:c, pct:v/total*100, angle:(cursor + dash/2) / circ * 360});
       cursor += dash;
       return html;
     }).join('');
   }
-  $('ring-svg').innerHTML = track + segs;
-  if(total > 0){
-    const top = rows[0];
-    $('ring-center').innerHTML = `<b>${(top[1]/total*100).toFixed(0)}%</b><span>${esc(catLabel(top[0]))}</span>`;
-  } else {
-    $('ring-center').innerHTML = `<b>—</b><span>${t('noDataYet')}</span>`;
-  }
+  $('ring-svg').innerHTML = track + segs + ringCallouts(callouts, CX, CY);
 }
 
 function esc(s){
@@ -1595,44 +1739,59 @@ function generateStoredReport(type, from, to, prevFrom, prevTo, periodLabel){
     createdAt: localISO(new Date())
   };
 }
+// "HH:MM" -> 当天第几点（取不到就当 0 点，也就是"周期一结束就算"，跟改动前的行为一致）
+function reportHour(pref){
+  const h = parseInt(String(pref||'00:00').split(':')[0], 10);
+  return (h>=0 && h<=23) ? h : 0;
+}
+function getReportTimeWeek(){ return DB.pref && DB.pref.reportTimeWeek || '09:00'; }
+function getReportTimeMonth(){ return DB.pref && DB.pref.reportTimeMonth || '09:00'; }
+function setReportTimeWeek(v){ DB.pref = DB.pref||{}; DB.pref.reportTimeWeek = v; saveDB(); if(BRIDGE&&BRIDGE.scheduleReports)BRIDGE.scheduleReports(); checkAutoReports(); updateReportsBadge(); }
+function setReportTimeMonth(v){ DB.pref = DB.pref||{}; DB.pref.reportTimeMonth = v; saveDB(); if(BRIDGE&&BRIDGE.scheduleReports)BRIDGE.scheduleReports(); checkAutoReports(); updateReportsBadge(); }
 function checkAutoReports(){
   DB.pref = DB.pref || {};
   DB.reports = DB.reports || [];
   let changed = false;
+  const now = new Date();
 
-  // 上一周有没有生成过
-  const thisWeekStart = startOfWeek(new Date());
-  const lastWeekStart = new Date(thisWeekStart); lastWeekStart.setDate(lastWeekStart.getDate()-7);
-  const lastWeekEnd = thisWeekStart;
-  const lastWeekKey = localISO(lastWeekStart).slice(0,10);
-  if(DB.pref.reportedWeekKey !== lastWeekKey){
-    const prevWeekStart = new Date(lastWeekStart); prevWeekStart.setDate(prevWeekStart.getDate()-7);
-    const eShow = new Date(lastWeekEnd); eShow.setDate(eShow.getDate()-1);
-    const sameMonth = lastWeekStart.getMonth()===eShow.getMonth();
-    const label = getLang()==='en'
-      ? monthDayLabel(lastWeekStart) + ' – ' + (sameMonth ? eShow.getDate() : monthDayLabel(eShow))
-      : (lastWeekStart.getMonth()+1)+'月'+lastWeekStart.getDate()+'日 – ' + (sameMonth?'':(eShow.getMonth()+1)+'月') + eShow.getDate()+'日';
-    const rec = generateStoredReport('week', lastWeekStart, lastWeekEnd, prevWeekStart, lastWeekStart, label);
-    if(rec) DB.reports.push(rec);
-    DB.pref.reportedWeekKey = lastWeekKey;
-    changed = true;
+  // 上一周有没有生成过——本周一到了设定的时间点，才算这份周报"该出了"
+  const thisWeekStart = startOfWeek(now);
+  const weekReadyAt = new Date(thisWeekStart); weekReadyAt.setHours(reportHour(getReportTimeWeek()),0,0,0);
+  if(now >= weekReadyAt){
+    const lastWeekStart = new Date(thisWeekStart); lastWeekStart.setDate(lastWeekStart.getDate()-7);
+    const lastWeekEnd = thisWeekStart;
+    const lastWeekKey = localISO(lastWeekStart).slice(0,10);
+    if(DB.pref.reportedWeekKey !== lastWeekKey){
+      const prevWeekStart = new Date(lastWeekStart); prevWeekStart.setDate(prevWeekStart.getDate()-7);
+      const eShow = new Date(lastWeekEnd); eShow.setDate(eShow.getDate()-1);
+      const sameMonth = lastWeekStart.getMonth()===eShow.getMonth();
+      const label = getLang()==='en'
+        ? monthDayLabel(lastWeekStart) + ' – ' + (sameMonth ? eShow.getDate() : monthDayLabel(eShow))
+        : (lastWeekStart.getMonth()+1)+'月'+lastWeekStart.getDate()+'日 – ' + (sameMonth?'':(eShow.getMonth()+1)+'月') + eShow.getDate()+'日';
+      const rec = generateStoredReport('week', lastWeekStart, lastWeekEnd, prevWeekStart, lastWeekStart, label);
+      if(rec) DB.reports.push(rec);
+      DB.pref.reportedWeekKey = lastWeekKey;
+      changed = true;
+    }
   }
 
-  // 上个月有没有生成过
-  const now = new Date();
+  // 上个月有没有生成过——月初第一天到了设定的时间点，才算这份月报"该出了"
   const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const lastMonthStart = new Date(now.getFullYear(), now.getMonth()-1, 1);
-  const lastMonthEnd = thisMonthStart;
-  const lastMonthKey = lastMonthStart.getFullYear()+'-'+pad2(lastMonthStart.getMonth()+1);
-  if(DB.pref.reportedMonthKey !== lastMonthKey){
-    const prevMonthStart = new Date(now.getFullYear(), now.getMonth()-2, 1);
-    const label = getLang()==='en'
-      ? MONTHS_EN[lastMonthStart.getMonth()]+' '+lastMonthStart.getFullYear()
-      : lastMonthStart.getFullYear()+'年'+(lastMonthStart.getMonth()+1)+'月';
-    const rec = generateStoredReport('month', lastMonthStart, lastMonthEnd, prevMonthStart, lastMonthStart, label);
-    if(rec) DB.reports.push(rec);
-    DB.pref.reportedMonthKey = lastMonthKey;
-    changed = true;
+  const monthReadyAt = new Date(thisMonthStart); monthReadyAt.setHours(reportHour(getReportTimeMonth()),0,0,0);
+  if(now >= monthReadyAt){
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth()-1, 1);
+    const lastMonthEnd = thisMonthStart;
+    const lastMonthKey = lastMonthStart.getFullYear()+'-'+pad2(lastMonthStart.getMonth()+1);
+    if(DB.pref.reportedMonthKey !== lastMonthKey){
+      const prevMonthStart = new Date(now.getFullYear(), now.getMonth()-2, 1);
+      const label = getLang()==='en'
+        ? MONTHS_EN[lastMonthStart.getMonth()]+' '+lastMonthStart.getFullYear()
+        : lastMonthStart.getFullYear()+'年'+(lastMonthStart.getMonth()+1)+'月';
+      const rec = generateStoredReport('month', lastMonthStart, lastMonthEnd, prevMonthStart, lastMonthStart, label);
+      if(rec) DB.reports.push(rec);
+      DB.pref.reportedMonthKey = lastMonthKey;
+      changed = true;
+    }
   }
 
   if(changed) saveDB();
@@ -2179,11 +2338,24 @@ function refreshSettingsPanel(){
   if(BRIDGE){
     $('url-api-group').hidden = true;
     $('btn-notif-access').hidden = false;
+    $('btn-report-notif').hidden = false;
+    $('btn-accessibility').hidden = false;
+    $('btn-diagnostics').hidden = false;
     const granted = BRIDGE.isNotificationAccessGranted && BRIDGE.isNotificationAccessGranted();
     $('notif-access-label').innerHTML = granted
       ? `${t('notifAccessOnLabel')}<small>${t('notifAccessOnDesc')}</small>`
       : `${t('notifAccessOffLabel')}<small>${t('notifAccessOffDesc')}</small>`;
     $('notif-access-go').textContent = granted ? t('notifAccessRecheck') : t('notifAccessGo');
+    const canPost = BRIDGE.canPostNotifications && BRIDGE.canPostNotifications();
+    $('report-notif-label').innerHTML = canPost
+      ? `${t('reportNotifOnLabel')}<small>${t('reportNotifOnDesc')}</small>`
+      : `${t('reportNotifOffLabel')}<small>${t('reportNotifOffDesc')}</small>`;
+    $('report-notif-go').textContent = canPost ? t('notifAccessRecheck') : t('reportNotifGo');
+    const accessibilityOn = BRIDGE.isAccessibilityAccessGranted && BRIDGE.isAccessibilityAccessGranted();
+    $('accessibility-label').innerHTML = accessibilityOn
+      ? `${t('accessibilityOnLabel')}<small>${t('accessibilityOnDesc')}</small>`
+      : `${t('accessibilityOffLabel')}<small>${t('accessibilityOffDesc')}</small>`;
+    $('accessibility-go').textContent = accessibilityOn ? t('accessibilityRecheck') : t('accessibilityGo');
     $('storage-note').textContent = t('storageNoteBridge');
   } else {
     const base = location.origin + location.pathname;
@@ -2206,6 +2378,30 @@ $('btn-settings').onclick = ()=>{
 $('btn-notif-access').onclick = ()=>{
   if(BRIDGE && BRIDGE.openNotificationSettings) BRIDGE.openNotificationSettings();
 };
+$('btn-report-notif').onclick = ()=>{
+  if(BRIDGE && BRIDGE.canPostNotifications && !BRIDGE.canPostNotifications() && BRIDGE.requestPostNotifications){
+    BRIDGE.requestPostNotifications();
+  } else refreshSettingsPanel();
+};
+$('btn-accessibility').onclick = ()=>{
+  if(!BRIDGE) return;
+  if(BRIDGE.isAccessibilityAccessGranted && BRIDGE.isAccessibilityAccessGranted()) refreshSettingsPanel();
+  else { sheetClose(); setTimeout(()=>sheetOpen('sheet-accessibility-consent'),260); }
+};
+$('btn-accessibility-accept').onclick = ()=>{
+  if(BRIDGE && BRIDGE.openAccessibilitySettings) BRIDGE.openAccessibilitySettings();
+};
+function renderDiagnostics(){
+  let rows = [];
+  try{ rows = JSON.parse(BRIDGE && BRIDGE.getCaptureDiagnostics ? BRIDGE.getCaptureDiagnostics() : '[]'); }catch(e){}
+  const labels = {recorded:t('diagRecorded'), merged:t('diagMerged'), duplicate:t('diagDuplicate'), not_a_transaction:t('diagIgnored'), empty:t('diagIgnored')};
+  $('diagnostics-body').innerHTML = rows.length ? rows.map(r=>{
+    const detail = r.amount ? ` · ${r.type==='income'?'+':'−'}¥${money(r.amount)} · ${esc(merchantLabel(r.merchant||'自动记录'))}` : '';
+    return `<div style="padding:8px 0;border-bottom:1px solid var(--rule-soft)"><span class="num">${esc(r.at||'')}</span> · ${esc(labels[r.result]||r.result)}${detail}<br><small>${esc(r.source||'')}</small></div>`;
+  }).join('') : `<div class="empty"><p>${t('diagnosticsEmpty')}</p></div>`;
+}
+$('btn-diagnostics').onclick = ()=>{ renderDiagnostics(); sheetClose(); setTimeout(()=>sheetOpen('sheet-diagnostics'),260); };
+$('btn-clear-diagnostics').onclick = ()=>{ if(BRIDGE&&BRIDGE.clearCaptureDiagnostics)BRIDGE.clearCaptureDiagnostics(); renderDiagnostics(); };
 $('btn-export').onclick = ()=>{
   const blob = new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
   const a = document.createElement('a');
@@ -2248,6 +2444,7 @@ $('in-time').value = localISO(new Date());
 checkAutoReports();
 updateReportsBadge();
 renderLangRow();
+renderReportTimeRow();
 applyLang();
 handleURLIntake();
 </script>

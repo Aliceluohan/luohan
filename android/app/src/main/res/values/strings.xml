@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Money Manager</string>
+    <string name="accessibility_description">仅在微信或支付宝位于前台时识别支付成功、转账和红包结果；不读取聊天内容，不自动点击，数据只保存在本机。</string>
 </resources>

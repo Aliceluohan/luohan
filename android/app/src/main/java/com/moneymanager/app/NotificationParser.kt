@@ -1,6 +1,12 @@
 package com.moneymanager.app
 
-data class ParsedTx(val amount: Double, val merchant: String, val type: String, val rawText: String)
+data class ParsedTx(
+    val amount: Double,
+    val merchant: String,
+    val type: String,
+    val rawText: String,
+    val confidence: Int = 70
+)
 
 /**
  * 和网页里 parseFromText() / normalize() / fingerprint() 保持同样的逻辑，
@@ -16,6 +22,8 @@ object NotificationParser {
     )
 
     private val merchantPatterns = listOf(
+        Regex("(?:交易商户|商户名称|收款商户|商户)[：:]\\s*([^,，。；;\\n]{2,30})"),
+        Regex("(?:收款方|付款给|转给|给)[：:]?\\s*([^\\s,，。；;]{1,24})"),
         Regex("(?:向|在|于)\\s*([^\\s,，。；;]{2,24}?)\\s*(?:付款|消费|支付|转账)"),
         Regex("(?:商户|收款方|对方|付款给)[：:]\\s*([^\\s,，。；;]{2,24})"),
         Regex("([^\\s,，。；;]{2,24}?)(?:交易成功|付款成功|支付成功)"),
@@ -24,8 +32,19 @@ object NotificationParser {
 
     private val incomeHint = Regex("收款|到账|入账|已存入|工资入账|收到.{0,10}(转账|红包)")
     private val expenseHint = Regex("付款|消费|支付成功|扣款|支出")
+    private val transactionHint = Regex("付款|消费|支付|扣款|支出|交易|红包|转账|收款|到账|入账|工资")
+    private val successHint = Regex("支付成功|付款成功|交易成功|转账成功|红包已发送|已发送红包|收款成功")
 
-    fun parse(text: String): ParsedTx? {
+    fun looksFinancial(text: String): Boolean = transactionHint.containsMatchIn(text)
+
+    fun parse(text: String, requireSuccess: Boolean = false, sourcePackage: String = ""): ParsedTx? {
+        if (!transactionHint.containsMatchIn(text)) return null
+        if (requireSuccess && !successHint.containsMatchIn(text)) return null
+        if (sourcePackage == "com.ecitic.bank.mobile") {
+            val accountContext = Regex("账户|银行卡|借记卡|信用卡|尾号|卡号")
+            val movement = Regex("支出|消费|扣款|支付|入账|收入|转入|到账|交易")
+            if (!accountContext.containsMatchIn(text) || !movement.containsMatchIn(text)) return null
+        }
         var amount: Double? = null
         for (p in amountPatterns) {
             val m = p.find(text) ?: continue
@@ -46,7 +65,18 @@ object NotificationParser {
         } else {
             "expense"
         }
-        return ParsedTx(amount, merchant.ifBlank { "自动记录" }, type, text)
+        val finalMerchant = merchant.ifBlank {
+            when {
+                text.contains("微信") || text.contains("财付通") -> "微信支付"
+                text.contains("支付宝") -> "支付宝"
+                text.contains("中信") -> "中信银行"
+                else -> "自动记录"
+            }
+        }
+        var confidence = 55
+        if (merchant.isNotBlank()) confidence += 20
+        if (successHint.containsMatchIn(text)) confidence += 15
+        return ParsedTx(amount, finalMerchant, type, text, confidence.coerceAtMost(95))
     }
 
     fun normalize(s: String?): String {

@@ -1,12 +1,15 @@
 package com.moneymanager.app
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.provider.Settings
 import android.view.View
 import android.webkit.JavascriptInterface
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 /**
  * 网页(assets/www/index.html)通过 window.AndroidBridge 调用这里。
@@ -15,15 +18,16 @@ import android.webkit.JavascriptInterface
  */
 class WebAppInterface(private val activity: Activity) {
 
-    private val prefs = activity.getSharedPreferences(DB_PREFS, Context.MODE_PRIVATE)
+    @JavascriptInterface
+    fun load(): String = MoneyStore.load(activity)
 
     @JavascriptInterface
-    fun load(): String = prefs.getString(DB_KEY, "") ?: ""
-
-    @JavascriptInterface
-    fun save(json: String) {
-        prefs.edit().putString(DB_KEY, json).apply()
+    fun save(json: String): String {
+        return MoneyStore.saveFromWeb(activity, json)
     }
+
+    @JavascriptInterface
+    fun scheduleReports() = ReportScheduler.scheduleAll(activity)
 
     @JavascriptInterface
     fun isNotificationAccessGranted(): Boolean {
@@ -37,6 +41,50 @@ class WebAppInterface(private val activity: Activity) {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         activity.startActivity(intent)
     }
+
+    @JavascriptInterface
+    fun isAccessibilityAccessGranted(): Boolean {
+        val enabled = Settings.Secure.getString(
+            activity.contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        ) ?: return false
+        val component = "${activity.packageName}/${PaymentAccessibilityService::class.java.name}"
+        return enabled.split(':').any { it.equals(component, ignoreCase = true) }
+    }
+
+    @JavascriptInterface
+    fun openAccessibilitySettings() {
+        activity.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        })
+    }
+
+    @JavascriptInterface
+    fun canPostNotifications(): Boolean {
+        return Build.VERSION.SDK_INT < 33 || ContextCompat.checkSelfPermission(
+            activity,
+            android.Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    @JavascriptInterface
+    fun requestPostNotifications() {
+        if (Build.VERSION.SDK_INT >= 33) {
+            activity.runOnUiThread {
+                ActivityCompat.requestPermissions(
+                    activity,
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    1042
+                )
+            }
+        }
+    }
+
+    @JavascriptInterface
+    fun getCaptureDiagnostics(): String = MoneyStore.diagnostics(activity)
+
+    @JavascriptInterface
+    fun clearCaptureDiagnostics() = MoneyStore.clearDiagnostics(activity)
 
     // 网页切换主题时调用，让系统状态栏/导航栏跟着换成同一个底色，不然会露出系统默认的黑色
     @JavascriptInterface
@@ -57,8 +105,4 @@ class WebAppInterface(private val activity: Activity) {
         }
     }
 
-    companion object {
-        const val DB_PREFS = "moneymanager_db"
-        const val DB_KEY = "db"
-    }
 }
