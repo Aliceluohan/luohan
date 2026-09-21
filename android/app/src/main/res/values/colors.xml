@@ -1,4 +1,7 @@
 <resources>
+    <!-- Kept for repositories updated through GitHub's web uploader, which may retain
+         the legacy ic_launcher.xml and ic_launcher_round.xml resource files. -->
+    <color name="ic_launcher_background">#0C4536</color>
     <color name="ic_ledger_background">#0C4536</color>
     <color name="ic_receipt_background">#F7F4EC</color>
 </resources>
