@@ -86,6 +86,12 @@ class WebAppInterface(private val activity: Activity) {
     @JavascriptInterface
     fun clearCaptureDiagnostics() = MoneyStore.clearDiagnostics(activity)
 
+    @JavascriptInterface
+    fun getLauncherIcon(): String = LauncherIconManager.current(activity)
+
+    @JavascriptInterface
+    fun setLauncherIcon(icon: String): Boolean = LauncherIconManager.switchTo(activity, icon)
+
     // 网页切换主题时调用，让系统状态栏/导航栏跟着换成同一个底色，不然会露出系统默认的黑色
     @JavascriptInterface
     fun setSystemBarColor(hex: String) {

@@ -465,6 +465,18 @@ main{padding:0 var(--pad)}
 }
 .theme-chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .theme-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.icon-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.icon-choice{
+  min-width:0;display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:16px 8px 14px;border:1px solid var(--rule);background:var(--card);
+  text-align:center;
+}
+.icon-choice[aria-checked="true"]{border:2px solid var(--ink);padding:15px 7px 13px}
+.icon-choice img{width:88px;height:88px;object-fit:cover;border-radius:20px}
+.icon-choice strong{font-size:14px;font-weight:600}
+.icon-choice small{font-size:11px;color:var(--ink-35)}
+.icon-choice[aria-checked="true"] small{color:var(--ink)}
+.icon-hint{font-size:12px;color:var(--ink-60);line-height:1.7;margin:0 0 18px}
 .report-time-row{display:flex;gap:10px}
 .report-time-field{flex:1;min-width:0}
 .report-time-field label{display:block;margin-bottom:7px}
@@ -697,6 +709,27 @@ main{padding:0 var(--pad)}
   <div style="height:calc(20px + var(--sab))"></div>
 </div>
 
+<div class="sheet" id="sheet-icon" role="dialog" aria-label="切换桌面图标" data-i18n-aria="iconTitle">
+  <div class="sheet-head">
+    <h2 data-i18n="iconTitle">切换桌面图标</h2>
+    <button class="close" data-close data-i18n="closeBtn">关闭</button>
+  </div>
+  <p class="icon-hint" data-i18n="iconHint">选择后，手机桌面的图标会更新。</p>
+  <div class="icon-choices" role="radiogroup" aria-label="桌面图标" data-i18n-aria="iconTitle">
+    <button class="icon-choice" type="button" role="radio" data-launcher-icon="ledger" aria-checked="false">
+      <img src="icon-ledger.png" alt="" width="88" height="88">
+      <strong data-i18n="iconLedger">账本</strong>
+      <small class="icon-choice-status"></small>
+    </button>
+    <button class="icon-choice" type="button" role="radio" data-launcher-icon="receipt" aria-checked="false">
+      <img src="icon-receipt.png" alt="" width="88" height="88">
+      <strong data-i18n="iconReceipt">账单</strong>
+      <small class="icon-choice-status"></small>
+    </button>
+  </div>
+  <div style="height:calc(20px + var(--sab))"></div>
+</div>
+
 <!-- 设置 -->
 <div class="sheet" id="sheet-settings" role="dialog" aria-label="设置与备份" data-i18n-aria="settingsAria">
   <div class="sheet-head">
@@ -707,6 +740,10 @@ main{padding:0 var(--pad)}
     <span data-i18n="themeSectionTitle">个性化界面</span>
     <div class="theme-row" id="theme-row"></div>
   </div>
+  <button class="row-btn" id="btn-launcher-icon" hidden>
+    <span><span data-i18n="iconRowTitle">切换桌面图标</span><small data-i18n="iconRowDesc">在账本和账单两款图标间切换</small></span>
+    <span class="go" data-i18n="iconGo">选择</span>
+  </button>
   <div class="row-block">
     <span data-i18n="langSectionTitle">语言</span>
     <div class="theme-row" id="lang-row"></div>
@@ -1085,6 +1122,10 @@ const I18N = {
     reportsEmptyHint:'每周一、每月1号会自动生成上一期的小结',
     reportWeek:'周报', reportMonth:'月报',
     settingsTitle:'设置与备份', themeSectionTitle:'个性化界面', langSectionTitle:'语言',
+    iconRowTitle:'切换桌面图标', iconRowDesc:'在账本和账单两款图标间切换', iconGo:'选择',
+    iconTitle:'切换桌面图标', iconHint:'选择后，手机桌面的图标会更新。',
+    iconLedger:'账本', iconReceipt:'账单', iconSelected:'当前使用', iconChoose:'点击使用',
+    iconSwitchDone:'桌面图标已切换，可能需要几秒刷新', iconSwitchFail:'切换失败，请稍后重试',
     reportTimeSectionTitle:'小结生成时间', reportTimeSectionDesc:'周报固定周一、月报固定月初，可以调整几点生成',
     reportTimeWeekLabel:'周报 · 周一', reportTimeMonthLabel:'月报 · 月初',
     importRowTitle:'导入账单', importRowDesc:'支付宝 / 微信导出的 CSV 账单', importGo:'导入',
@@ -1158,6 +1199,10 @@ const I18N = {
     reportsEmptyHint:'A summary is generated automatically every Monday and on the 1st of each month',
     reportWeek:'Weekly', reportMonth:'Monthly',
     settingsTitle:'Settings & Backup', themeSectionTitle:'Appearance', langSectionTitle:'Language',
+    iconRowTitle:'Change App Icon', iconRowDesc:'Choose between Ledger and Receipt', iconGo:'Choose',
+    iconTitle:'Change App Icon', iconHint:'Your phone’s home-screen icon updates after selection.',
+    iconLedger:'Ledger', iconReceipt:'Receipt', iconSelected:'In use', iconChoose:'Tap to use',
+    iconSwitchDone:'Icon changed. The home screen may take a few seconds to refresh.', iconSwitchFail:'Could not change icon. Please try again.',
     reportTimeSectionTitle:'Summary Timing', reportTimeSectionDesc:'Weekly is fixed to Monday, monthly to the 1st — you can adjust the hour',
     reportTimeWeekLabel:'Weekly · Mon', reportTimeMonthLabel:'Monthly · 1st',
     importRowTitle:'Import Bill', importRowDesc:'CSV exported from Alipay / WeChat', importGo:'Import',
@@ -1237,6 +1282,7 @@ function applyLang(){
   }
   updateCatPill();
   if(openSheet === 'sheet-settings') refreshSettingsPanel();
+  if(openSheet === 'sheet-icon') refreshIconChoices();
   render();
 }
 function renderLangRow(){
@@ -2337,6 +2383,7 @@ $('btn-reports').onclick = ()=>{
 function refreshSettingsPanel(){
   if(BRIDGE){
     $('url-api-group').hidden = true;
+    $('btn-launcher-icon').hidden = false;
     $('btn-notif-access').hidden = false;
     $('btn-report-notif').hidden = false;
     $('btn-accessibility').hidden = false;
@@ -2371,10 +2418,31 @@ function refreshSettingsPanel(){
       : t('storageNoteWebBad');
   }
 }
+function refreshIconChoices(){
+  const active = BRIDGE && BRIDGE.getLauncherIcon ? BRIDGE.getLauncherIcon() : 'ledger';
+  document.querySelectorAll('[data-launcher-icon]').forEach(button=>{
+    const selected = button.dataset.launcherIcon === active;
+    button.setAttribute('aria-checked', selected ? 'true' : 'false');
+    button.querySelector('.icon-choice-status').textContent = t(selected ? 'iconSelected' : 'iconChoose');
+  });
+}
 $('btn-settings').onclick = ()=>{
   refreshSettingsPanel();
   sheetOpen('sheet-settings');
 };
+$('btn-launcher-icon').onclick = ()=>{
+  refreshIconChoices();
+  sheetOpen('sheet-icon');
+};
+document.querySelectorAll('[data-launcher-icon]').forEach(button=>{
+  button.onclick = ()=>{
+    if(!BRIDGE || !BRIDGE.setLauncherIcon) return;
+    let changed = false;
+    try{ changed = BRIDGE.setLauncherIcon(button.dataset.launcherIcon); }catch(e){}
+    refreshIconChoices();
+    toast(null, t(changed ? 'iconSwitchDone' : 'iconSwitchFail'));
+  };
+});
 $('btn-notif-access').onclick = ()=>{
   if(BRIDGE && BRIDGE.openNotificationSettings) BRIDGE.openNotificationSettings();
 };

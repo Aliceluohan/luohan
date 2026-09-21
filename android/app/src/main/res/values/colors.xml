@@ -1,3 +1,4 @@
 <resources>
-    <color name="ic_launcher_background">#20324A</color>
+    <color name="ic_ledger_background">#0C4536</color>
+    <color name="ic_receipt_background">#F7F4EC</color>
 </resources>
